@@ -1,6 +1,6 @@
 'use strict';
 
-var catsApp = angular.module('catsApp', ['ui.router', 'ui.bootstrap', 'ngTagsInput', 'ipCookie']);
+var catsApp = angular.module('catsApp', ['ui.router', 'ui.bootstrap', 'ipCookie']);
 
 catsApp.config(function ($stateProvider, $compileProvider) {
     $stateProvider.
