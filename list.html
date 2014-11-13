@@ -1,0 +1,65 @@
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://www.ninelivesfoundation.org/">Nine Lives Foundation</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a ui-sref="list">Cats</a></li>
+                <li><a ui-sref="login">Log In</a></li>
+                <li><a ui-sref="logout">Log Out</a></li>
+            </ul>
+            <form class="navbar-form navbar-left" role="search">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search" ng-model="catFilter">
+                </div>
+            </form>
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Status
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a ui-sref="list">Available</a></li>
+                        <li><a ui-sref="filteredList({status:'Hold'})">Hold</a></li>
+                        <li><a ui-sref="filteredList({status:'Not Available'})">Not Available</a></li>
+                        <li><a ui-sref="filteredList({status:'Returned'})">Returned</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
+</nav>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            <a ui-sref="addCat" title="Add new cat">
+                <span class="glyphicon glyphicon-plus"></span>
+            </a>
+        </th>
+        <th>Name</th>
+        <th>Room</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="cat in cats|filter: catFilter">
+        <td><a ui-sref="editCat({catId:cat.animalID})"><img ng-src="{{cat.animalPictures[0].urlInsecureThumbnail}}"
+                                                            style="cursor: pointer; max-width:100px; max-height:100px"
+                                                            class="img-rounded"></a></td>
+        <td><a ui-sref="editCat({catId:cat.animalID})">{{cat.animalName}}</a></td>
+        <td>{{cat.locationName}}</td>
+    </tr>
+    </tbody>
+</table>

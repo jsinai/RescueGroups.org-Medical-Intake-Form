@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Nine Lives Medical Record</title>
+</head>
+<body>
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://www.ninelivesfoundation.org/">Nine Lives Foundation</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a ui-sref="list">Cats</a></li>
+                <li><a ui-sref="logout">Log Out</a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
+</nav>
+
+<div class="container">
+<div class="jumbotron">
+    <table>
+        <tr>
+            <td><img src="nl-logo.png"></td>
+            <td><h1 style="padding-left: 30px;">Medical Record</h1></td>
+        </tr>
+    </table>
+
+</div>
+<form role="form" name="intakeForm" ng-submit="saveCat(intakeForm.$valid)">
+    <div class="col-md-12">
+        <div class="row">
+            <fieldset>
+                <legend>General Information</legend>
+                <div class="col-sm-3">
+                    <div class="form-group required"
+                         ng-class="{'has-error': editScreenForm.catName.$error.required}">
+                        <label class="control-label" for="cat-name">Name</label>
+                        <input type="text" class="form-control" id="cat-name" name="catName" ng-model="cat.animalName"
+                               placeholder="Name" ng-change="isCatNameTaken()" required>
+                    <span class="control-label"
+                          ng-show="editScreenForm.catName.$error.required">Input Required</span>
+                        <alert ng-repeat="alert in nameAlerts" type="{{alert.type}}" close="nameAlerts.splice(0, 1)">
+                            {{alert.msg}}
+                        </alert>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group required">
+                        <label class="control-label" for="gender">Gender</label>
+                        <select class="form-control" id="gender" ng-model="cat.animalSex" required
+                                ng-options="choice for choice in ['Male', 'Female']">
+                            <option value="">-- choose one --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group required">
+                        <label class="control-label" for="cat-color">Color</label>
+                        <select class="form-control" id="cat-color" ng-model="selectedCatColor" required
+                                ng-change="cat.animalColorID=selectedCatColor.id"
+                                ng-options="catColor.name for catColor in catColors track by catColor.name">
+                            <option value="">-- choose one --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group required">
+                        <label class="control-label" for="cat-breed">Breed</label>
+                        <select class="form-control" id="cat-breed" ng-model="selectedBreed" ng-change="setBreed()" required
+                                ng-options="breed.breedName for breed in breeds track by breed.breedID">
+                            <option value="">-- choose one --</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="row">
+            <fieldset>
+                <div class="col-sm-3">
+                    <div class="form-group required">
+                        <label class="control-label" for="coat-length">Coat Length</label>
+                        <select class="form-control" id="coat-length" ng-model="cat.animalCoatLength" required
+                                ng-options="choice for choice in ['Short', 'Medium', 'Long']">
+                            <option value="">-- choose one --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="cat-dob">Estimated Date of Birth</label>
+                        <input type="date" class="form-control" id="cat-dob" name="catDob"
+                               ng-model="cat.animalBirthdate"
+                               ng-change="setDob()">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label class="control-label" for="admitted">Intake Date</label>
+                        <input type="date" class="form-control" id="admitted" placeholder="Admitted"
+                               ng-model="cat.animalReceivedDate">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="cat-age">Age at Intake</label>
+                        <input type="text" class="form-control" id="cat-age" name="catAge" ng-model="cat.age"
+                               placeholder="Age">
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="row">
+            <fieldset>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="altered">Altered at Intake</label>
+                        <select class="form-control" id="altered" ng-model="cat.animalAltered"
+                                ng-options="choice for choice in ['Yes', 'No']">
+                            <option value="">-- choose one --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="where-altered">Where Altered</label>
+                        <input type="text" class="form-control" id="where-altered" placeholder="Where Altered"
+                               ng-model="cat.whereAltered">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="cat-source">Intake Source</label>
+                        <input type="text" class="form-control" id="cat-source" name="catSource"
+                               ng-model="cat.source"
+                               placeholder="Source">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="cat-weight">Weight</label>
+                        <input type="text" class="form-control" id="cat-weight" name="catWeight"
+                               ng-model="cat.weight"
+                               placeholder="Weight">
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="microchip-vendor">Microchip Vendor</label>
+                    <select class="form-control" id="microchip-vendor" ng-model="selectedMicrochipVendor"
+                            ng-change="cat.animalMicrochipVendor=selectedMicrochipVendor.name"
+                            ng-options="microchipVendor.name for microchipVendor in microchipVendors track by microchipVendor.name">
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="microchip-id">Microchip ID</label>
+                    <input type="text" class="form-control" id="microchip-id" name="microchipId"
+                           ng-model="cat.animalMicrochipNumber"
+                           placeholder="Microchip ID">
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="cat-status">Status</label>
+                    <select class="form-control" id="cat-status" ng-model="selectedStatus"
+                            ng-change="cat.animalStatus=selectedStatus.name"
+                            ng-options="status.name for status in statuses track by status.name">
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Declawed</label>
+
+                    <div class="btn-group form-control"
+                         style="padding: 0;border: none;box-shadow: none;-webkit-box-shadow:none;-moz-box-shadow: none;">
+                        <label class="btn btn-primary" ng-model="cat.declawed.front" btn-checkbox>Front</label>
+                        <label class="btn btn-primary" ng-model="cat.declawed.back" btn-checkbox>Back</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <fieldset>
+                <legend>Vaccine History</legend>
+            </fieldset>
+        </div>
+
+        <div class="row" ng-repeat="(vaccinationIndex, vaccination) in cat.vaccinations">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="vaccinationName" name="vaccinationName"
+                           ng-model="cat.vaccinations[vaccinationIndex].name"
+                           placeholder="Vaccination Name"
+                           typeahead="choice for choice in ['FVRCP #1', 'FVRCP #2', 'FVRCP #3', 'FELV #1', 'FELV #2', 'Rabies']"
+                           tooltip="E.g. FVRCP, FELV, Rabies"
+                           tooltip-trigger="focus"
+                           tooltip-placement="right">
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <input type="date" class="form-control" id="vaccinationDate" name="vaccinationDate"
+                           ng-model="cat.vaccinations[vaccinationIndex].date"
+                           placeholder="Vaccination Date">
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <a href ng-click="addVaccination()" class="">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </a>
+                <a href ng-click="removeVaccination(vaccinationIndex)" class="">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <fieldset>
+                <legend>Clinic Comments ("Private Notes" in RescueGroups)</legend>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <textarea class="form-control" id="cat-notes" name="catNotes"
+                                  ng-model="cat.animalNotes"
+                                  placeholder="Clinic Comments"></textarea>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <a ui-sref="list" type="submit" class="btn btn-default">Cancel</a>
+        <button class="btn btn-default btn-primary" ng-disabled="userForm.$invalid">Save</button>
+
+        <p>Version 1.0</p>
+    </div>
+</form>
+</div>
+</body>
+</html>
