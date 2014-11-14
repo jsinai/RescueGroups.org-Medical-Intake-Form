@@ -26,9 +26,7 @@
                 <li><a ui-sref="logout">Log Out</a></li>
             </ul>
         </div>
-        <!-- /.navbar-collapse -->
     </div>
-    <!-- /.container-fluid -->
 </nav>
 
 <div class="container">
@@ -179,10 +177,10 @@
                 </div>
             </div>
             <div class="col-sm-3">
-                <div class="form-group">
-                    <label for="cat-status">Status</label>
+                <div class="form-group required">
+                    <label for="cat-status" class="control-label">Status</label>
                     <select class="form-control" id="cat-status" ng-model="selectedStatus"
-                            ng-change="cat.animalStatus=selectedStatus.name"
+                            ng-change="setStatus()" required
                             ng-options="status.name for status in statuses track by status.name">
                     </select>
                 </div>
@@ -235,7 +233,7 @@
         </div>
         <div class="row">
             <fieldset>
-                <legend>Clinic Comments ("Private Notes" in RescueGroups)</legend>
+                <legend>Clinic Comments</legend>
                 <div class="col-sm-6">
                     <div class="form-group">
                         <textarea class="form-control" id="cat-notes" name="catNotes"

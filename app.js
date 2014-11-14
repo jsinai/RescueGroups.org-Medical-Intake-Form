@@ -1,8 +1,8 @@
 'use strict';
 
-var catsApp = angular.module('catsApp', ['ui.router', 'ui.bootstrap', 'ipCookie']);
+var catsApp = angular.module('catsApp', ['ui.router', 'ui.bootstrap', 'ipCookie', 'angular-growl']);
 
-catsApp.config(function ($stateProvider, $compileProvider) {
+catsApp.config(function ($stateProvider) {
     $stateProvider.
         state('list', {
             url: "/",
@@ -85,3 +85,10 @@ catsApp.config(function ($stateProvider, $compileProvider) {
                 }
             });
     });
+// TODO: doesn't work yet
+catsApp.config(["growlProvider", "$httpProvider", function(growlProvider, $httpProvider) {
+    growlProvider.messagesKey("ret.data.messages.recordMessages");
+    growlProvider.messageTextKey("messageText");
+//    growlProvider.messageSeverityKey("severity-level");
+    $httpProvider.interceptors.push(growlProvider.serverMessagesInterceptor);
+}]);

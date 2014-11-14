@@ -5,7 +5,7 @@ catsApp.constant('rgApi', 'http://test-api.rescuegroups.org/http/json');
 
 catsApp.factory('catServicesHolder',
     function ($log, $filter, $location, catState, getCatNamesService, getBreedsService, getColorsService,
-              getMicrochipVendorsService, catUtils, addEditCatService, getStatusesService) {
+              getMicrochipVendorsService, catUtils, addEditCatService, getStatusesService, growl) {
         return {
             catState: catState,
             getCatNamesService: getCatNamesService,
@@ -14,7 +14,8 @@ catsApp.factory('catServicesHolder',
             getMicrochipVendorsService: getMicrochipVendorsService,
             catUtils: catUtils,
             addEditCatService: addEditCatService,
-            getStatusesService: getStatusesService
+            getStatusesService: getStatusesService,
+            growl: growl
         };
     });
 catsApp.service('addEditCatService',
@@ -56,7 +57,7 @@ catsApp.service('addEditCatService',
                         "animalSex": cat.animalSex,
                         "animalDeclawed": (cat.declawed.front || cat.declawed.back) ? "Yes" : "No",
                         "animalSpeciesID": "Cat",
-                        "animalStatusID": "1"
+                        "animalStatusID": cat.animalStatusID
                     }
                 ]};
             if (isEdit) {
@@ -113,6 +114,7 @@ catsApp.service('getAllCats',
                         "animalSpecialneeds",
                         "animalSpecies",
                         "animalStatus",
+                        "animalStatusID",
                         "locationName"
                     ],
                     "filters": [
@@ -174,14 +176,10 @@ catsApp.service('getOneCat',
                         "animalSpecialneeds",
                         "animalSpecies",
                         "animalStatus",
+                        "animalStatusID",
                         "locationName"
                     ],
                     "filters": [
-                        {
-                            "fieldName": "animalStatus",
-                            "operation": "equals",
-                            "criteria": "Available"
-                        },
                         {
                             "fieldName": "animalID",
                             "operation": "equals",
@@ -199,13 +197,14 @@ catsApp.service('getOneCat',
     }
 );
 catsApp.service('getCatNamesService',
-    function ($http, rgApi) {
-        this.getData = function (catId) {
+    function ($http, rgApi, catState) {
+        this.getData = function () {
             var postData =
             {
-                "apikey": "JrxyBdcw",
+                "token": catState.getState().token,
+                "tokenHash": catState.getState().tokenHash,
                 "objectType": "animals",
-                "objectAction": "publicSearch",
+                "objectAction": "search",
                 "search": {
                     "calcFoundRows": "Yes",
                     "resultStart": 0,

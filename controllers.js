@@ -99,6 +99,10 @@ function initAddEdit($scope, $log, $filter, $location, catServicesHolder, isEdit
         $scope.cat.animalBreed = $scope.selectedBreed.breedName;
         $scope.cat.animalPrimaryBreedID = $scope.selectedBreed.breedID;
     };
+    $scope.setStatus = function () {
+        $scope.cat.animalStatus = $scope.selectedStatus.name;
+        $scope.cat.animalStatusID = $scope.selectedStatus.id;
+    };
     $scope.saveCat = function (isValid) {
         if (!isValid) {
             // The user should never see this, it's a fail-safe.
@@ -132,13 +136,6 @@ function initAddEdit($scope, $log, $filter, $location, catServicesHolder, isEdit
         var promise = catServicesHolder.addEditCatService.addEditCat(catServicesHolder.catState.getState().token,
             catServicesHolder.catState.getState().tokenHash, $scope.cat, isEdit);
         promise.then(function (ret) {
-            console.log(ret);
-            var success =
-                (ret.status == 200 &&
-                    ret.statusText == "OK" &&
-                    ret.data.status == "ok" &&
-                    ret.data.messages.recordMessages[0].status == "ok");
-            $location.path("/");
             /*
              ret.status==200
              ret.statusText=="OK"
@@ -147,9 +144,22 @@ function initAddEdit($scope, $log, $filter, $location, catServicesHolder, isEdit
              ret.data.messages.recordMessages[0].ID: 7833263
              ret.data.messages.recordMessages[0].messageText should say "Successfully saved the record."
              */
+            var success =
+                (ret.status == 200 &&
+                    ret.statusText == "OK" &&
+                    ret.data.status == "ok" &&
+                    ret.data.messages.recordMessages[0].status == "ok");
+            if (success) {
+                catServicesHolder.growl.addSuccessMessage("Successfully " + (isEdit ? "Edited" : "Added") + " " +
+                    $scope.cat.animalName, {ttl:5000});
+                $location.path("/");
+            } else {
+                catServicesHolder.growl.addErrorMessage("Error encountered: " +
+                    JSON.stringify(ret.data.messages.recordMessages, null, " "));
+            }
         });
         promise.error(function (msg) {
-            console.log(msg);
+            catServicesHolder.growl.addErrorMessage(msg);
         });
     };
 
@@ -186,6 +196,8 @@ function initAddEdit($scope, $log, $filter, $location, catServicesHolder, isEdit
         });
         if (!$scope.selectedBreed) {
             $scope.selectedBreed = defaultBreed;
+            $scope.cat.animalBreed = defaultBreed.breedName;
+            $scope.cat.animalPrimaryBreedID = defaultBreed.breedID;
         }
     });
     $scope.catColors = [];
@@ -202,10 +214,14 @@ function initAddEdit($scope, $log, $filter, $location, catServicesHolder, isEdit
         });
     });
     $scope.catNames = [];
-    catServicesHolder.getCatNamesService.getData().then(function (ret) {
+    var getCatNamesServicePromise = catServicesHolder.getCatNamesService.getData();
+    getCatNamesServicePromise.then(function (ret) {
         angular.forEach(ret.data.data, function (value, key) {
             $scope.catNames.push(value.animalName);
-        });
+        })
+    });
+    getCatNamesServicePromise.error(function (msg) {
+        catServicesHolder.growl.addErrorMessage("getCatNamesService: "+JSON.stringify(msg, null, " "));
     });
     $scope.microchipVendors = [];
     $scope.selectedMicrochipVendor = undefined;
@@ -237,6 +253,8 @@ function initAddEdit($scope, $log, $filter, $location, catServicesHolder, isEdit
         });
         if (!$scope.selectedStatus) {
             $scope.selectedStatus = defaultStatus;
+            $scope.cat.animalStatus = defaultStatus.name;
+            $scope.cat.animalStatusID = defaultStatus.id;
         }
     });
     $scope.nameAlerts = [];
@@ -252,21 +270,21 @@ function initAddEdit($scope, $log, $filter, $location, catServicesHolder, isEdit
         }
     }
 }
-function loginController($state, $scope, loginService, catState) {
+function loginController($state, $scope, growl, loginService, catState) {
 
     $scope.doLogin = function () {
         var promise = loginService.login($scope.username, $scope.password, "910");
         promise.then(function (ret) {
             if (ret.data.status == "error") {
-                console.log("Error logging in!");
+                growl.addErrorMessage("Error logging in!");
             } else {
+                growl.addSuccessMessage("Successfully logged in", {ttl:5000});
                 catState.setState(ret.data.data.token, ret.data.data.tokenHash);
-                // TODO: there's a better way to do this
                 $state.go("list");
             }
         });
         promise.error(function (msg) {
-            console.log(msg);
+            growl.addErrorMessage(msg);
         });
     };
 }
