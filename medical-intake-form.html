@@ -103,21 +103,27 @@
                         <label for="cat-dob">Estimated Date of Birth</label>
                         <input type="date" class="form-control" id="cat-dob" name="catDob"
                                ng-model="cat.animalBirthdate"
-                               ng-change="setDob()">
+                               ng-change="setAge()">
+                        <alert ng-repeat="alert in dobAlerts" type="{{alert.type}}" close="dobAlerts.splice(0, 1)">
+                            {{alert.msg}}
+                        </alert>
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="form-group">
                         <label class="control-label" for="admitted">Intake Date</label>
                         <input type="date" class="form-control" id="admitted" placeholder="Admitted"
-                               ng-model="cat.animalReceivedDate">
+                               ng-model="cat.animalReceivedDate" ng-change="setAge()">
+                        <alert ng-repeat="alert in admittedAlerts" type="{{alert.type}}" close="admittedAlerts.splice(0, 1)">
+                            {{alert.msg}}
+                        </alert>
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="form-group">
                         <label for="cat-age">Age at Intake</label>
                         <input type="text" class="form-control" id="cat-age" name="catAge" ng-model="cat.age"
-                               placeholder="Age">
+                               placeholder="Age" disabled>
                     </div>
                 </div>
             </fieldset>
@@ -219,7 +225,10 @@
                 <div class="form-group">
                     <input type="date" class="form-control" id="vaccinationDate" name="vaccinationDate"
                            ng-model="cat.vaccinations[vaccinationIndex].date"
-                           placeholder="Vaccination Date">
+                           placeholder="Vaccination Date" ng-change="validateVaccinationDate(vaccinationIndex)">
+                    <alert ng-repeat="alert in cat.vaccinations[vaccinationIndex].alerts" type="{{alert.type}}" close="cat.vaccinations[vaccinationIndex].alerts.splice(0, 1)">
+                        {{alert.msg}}
+                    </alert>
                 </div>
             </div>
             <div class="col-sm-1">

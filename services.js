@@ -361,14 +361,20 @@ catsApp.service('loginService',
 );
 catsApp.service('catUtils',
     function () {
-        this.ageFromDate = function (birthDate, defaultAge) {
+        this.ageFromDate = function (birthDate, intakeDate, defaultAge) {
             if (!birthDate || birthDate.toDateString() === "Invalid Date") {
                 return defaultAge;
             }
-            var today = new Date();
-            var y = today.getFullYear() - birthDate.getFullYear();
-            var m = today.getMonth() - birthDate.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            var dateToSubtract = intakeDate;
+            if (!intakeDate || intakeDate.toDateString() === "Invalid Date") {
+                dateToSubtract = new Date();
+            }
+            var y = dateToSubtract.getFullYear() - birthDate.getFullYear();
+            var m = dateToSubtract.getMonth() - birthDate.getMonth();
+            if (m < 0) {
+                y--;
+                m = 12 + m;
+            } else if (m < 0 || (m === 0 && dateToSubtract.getDate() < birthDate.getDate())) {
                 y--;
             }
             return y + " yrs " + m + " mths";

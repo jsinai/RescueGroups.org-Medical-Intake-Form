@@ -22,7 +22,7 @@ function medicalIntakeController($scope, $log, $filter, $location, catServicesHo
         whereAltered: "",
         declawed: {front: false, back: false},
         vaccinations: [
-            {name: "", date: ""}
+            {name: "", date: "", alerts:[]}
         ]
     };
     initAddEdit($scope, $log, $filter, $location, catServicesHolder, false);
@@ -40,7 +40,7 @@ function editIntakeController($scope, $log, $filter, $location, catServicesHolde
         $scope.cat.whereAltered = "";
         $scope.cat.declawed = {front: false, back: false};
         $scope.cat.vaccinations = [
-            {name: "", date: ""}
+            {name: "", date: "", alerts:[]}
         ];
     };
     // Decode our private fields (keep in sync with addEditCatService)
@@ -65,7 +65,7 @@ function editIntakeController($scope, $log, $filter, $location, catServicesHolde
             }
             $scope.cat.vaccinations = decodedCat.vaccinations;
             if ($scope.cat.vaccinations.length < 1) {
-                $scope.cat.vaccinations.push({name: "", date: ""});
+                $scope.cat.vaccinations.push({name: "", date: "", alerts:[]});
             } else {
                 $scope.cat.vaccinations.forEach(function (vaccination) {
                     vaccination.date = new Date(vaccination.date);
@@ -81,14 +81,49 @@ function editIntakeController($scope, $log, $filter, $location, catServicesHolde
     initAddEdit($scope, $log, $filter, $location, catServicesHolder, true);
 }
 function initAddEdit($scope, $log, $filter, $location, catServicesHolder, isEdit) {
-    $scope.setDob = function () {
-        $scope.cat.age = catServicesHolder.catUtils.ageFromDate($scope.cat.animalBirthdate, $scope.cat.age);
+    $scope.dobAlerts = [];
+    $scope.admittedAlerts = [];
+    $scope.setAge = function () {
+        var today = new Date();
+        if ($scope.cat.animalBirthdate > today) {
+            var futureDobAlerts = $filter('filter')($scope.dobAlerts, 'Date cannot be in the future');
+            if (futureDobAlerts.length < 1) {
+                $scope.dobAlerts.push({type: 'danger', msg: 'Date cannot be in the future'});
+            }
+        } else {
+            $scope.dobAlerts.splice(0, 1);
+        }
+        var futureAdmittedAlerts = $filter('filter')($scope.admittedAlerts, 'Date cannot be in the future');
+        if ($scope.cat.animalReceivedDate > today) {
+            if (futureAdmittedAlerts.length < 1) {
+                $scope.admittedAlerts.push({type: 'danger', msg: 'Date cannot be in the future'});
+            }
+        } else {
+            if (futureAdmittedAlerts.length > 0) {
+                $scope.admittedAlerts.splice(0, 1);
+            }
+        }
+        var dobLaterThanIntakeAlerts = $filter('filter')($scope.admittedAlerts,
+            'Intake Date cannot be earlier than Estimated Date of Birth');
+        if ($scope.cat.animalReceivedDate < $scope.cat.animalBirthdate) {
+            if (dobLaterThanIntakeAlerts.length < 1) {
+                $scope.admittedAlerts.push({type: 'danger', msg: 'Intake Date cannot be earlier than Estimated Date of Birth'});
+            }
+        } else {
+            if (dobLaterThanIntakeAlerts.length > 0) {
+                $scope.admittedAlerts.splice(0, 1);
+            }
+        }
+        $scope.cat.age =
+            catServicesHolder.catUtils.ageFromDate($scope.cat.animalBirthdate, $scope.cat.animalReceivedDate,
+                $scope.cat.age);
     };
     $scope.cat.age = $scope.cat.animalBirthdate ?
-        catServicesHolder.catUtils.ageFromDate($scope.cat.animalBirthdate, $scope.cat.age) : "";
+        catServicesHolder.catUtils.ageFromDate($scope.cat.animalBirthdate, $scope.cat.animalReceivedDate,
+            $scope.cat.age) : "";
 
     $scope.addVaccination = function () {
-        $scope.cat.vaccinations.push({name: "", date: ""});
+        $scope.cat.vaccinations.push({name: "", date: "", alerts:[]});
     };
     $scope.removeVaccination = function (vaccinationIndex) {
         if (vaccinationIndex > 0) {
@@ -102,6 +137,16 @@ function initAddEdit($scope, $log, $filter, $location, catServicesHolder, isEdit
     $scope.setStatus = function () {
         $scope.cat.animalStatus = $scope.selectedStatus.name;
         $scope.cat.animalStatusID = $scope.selectedStatus.id;
+    };
+    $scope.validateVaccinationDate = function(vaccinationIndex) {
+        if ($scope.cat.vaccinations[vaccinationIndex].date > new Date()) {
+            var futureVaccinationAlerts = $filter('filter')($scope.dobAlerts, 'Date cannot be in the future');
+            if (futureVaccinationAlerts .length < 1) {
+                $scope.cat.vaccinations[vaccinationIndex].alerts.push({type: 'danger', msg: 'Date cannot be in the future'});
+            }
+        } else {
+            $scope.cat.vaccinations[vaccinationIndex].alerts.splice(0, 1);
+        }
     };
     $scope.saveCat = function (isValid) {
         if (!isValid) {
@@ -151,7 +196,7 @@ function initAddEdit($scope, $log, $filter, $location, catServicesHolder, isEdit
                     ret.data.messages.recordMessages[0].status == "ok");
             if (success) {
                 catServicesHolder.growl.addSuccessMessage("Successfully " + (isEdit ? "Edited" : "Added") + " " +
-                    $scope.cat.animalName, {ttl:5000});
+                    $scope.cat.animalName, {ttl: 5000});
                 $location.path("/");
             } else {
                 catServicesHolder.growl.addErrorMessage("Error encountered: " +
@@ -221,7 +266,7 @@ function initAddEdit($scope, $log, $filter, $location, catServicesHolder, isEdit
         })
     });
     getCatNamesServicePromise.error(function (msg) {
-        catServicesHolder.growl.addErrorMessage("getCatNamesService: "+JSON.stringify(msg, null, " "));
+        catServicesHolder.growl.addErrorMessage("getCatNamesService: " + JSON.stringify(msg, null, " "));
     });
     $scope.microchipVendors = [];
     $scope.selectedMicrochipVendor = undefined;
@@ -278,7 +323,7 @@ function loginController($state, $scope, growl, loginService, catState) {
             if (ret.data.status == "error") {
                 growl.addErrorMessage("Error logging in!");
             } else {
-                growl.addSuccessMessage("Successfully logged in", {ttl:5000});
+                growl.addSuccessMessage("Successfully logged in", {ttl: 5000});
                 catState.setState(ret.data.data.token, ret.data.data.tokenHash);
                 $state.go("list");
             }
