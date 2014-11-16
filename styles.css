@@ -3,6 +3,7 @@
     content: "*";
     color: red;
 }
+
 /*  Center the "loading" div.
     See http://www.w3.org/Style/Examples/007/center.en.html#vertical3
     See http://stackoverflow.com/questions/15464055/css-transition-effect-makes-image-blurry-moves-image-1px-in-chrome
@@ -15,3 +16,9 @@ div.loading {
     -webkit-transform: translate(-50%, -50%) translateZ(0) scale(1.0, 1.0);
     -webkit-backface-visibility: hidden;
 }
+
+/* Declawed check buttons */
+.btn-primary:active, .btn-primary.active {
+    background-color: #4996DA;
+}
+
