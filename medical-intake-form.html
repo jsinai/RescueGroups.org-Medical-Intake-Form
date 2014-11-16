@@ -39,7 +39,8 @@
     </table>
 
 </div>
-<form role="form" name="intakeForm" ng-submit="saveCat(intakeForm.$valid)">
+<!--<form role="form" name="intakeForm" ng-submit="saveCat(intakeForm.$valid)">-->
+<form role="form" name="intakeForm">
     <div class="col-md-12">
         <div class="row">
             <fieldset>
@@ -253,7 +254,8 @@
             </fieldset>
         </div>
         <a ui-sref="list" type="submit" class="btn btn-default">Cancel</a>
-        <button class="btn btn-default btn-primary" ng-disabled="userForm.$invalid">Save</button>
+        <button class="btn btn-default btn-primary" ng-click="saveCat(intakeForm.$valid, 'list')" ng-disabled="userForm.$invalid">Save</button>
+        <button class="btn btn-default btn-primary" ng-click="saveCat(intakeForm.$valid, 'addCat')" ng-disabled="userForm.$invalid">Save and Add Another</button>
 
         <p>Version 1.0</p>
     </div>

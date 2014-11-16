@@ -1,6 +1,6 @@
 'use strict';
 
-function medicalIntakeController($scope, $log, $filter, $location, catServicesHolder) {
+function medicalIntakeController($scope, $log, $filter, $state, catServicesHolder) {
     $scope.cat = {
         // Items stored in rescuegroups fields
         animalAltered: false,
@@ -25,9 +25,9 @@ function medicalIntakeController($scope, $log, $filter, $location, catServicesHo
             {name: "", date: "", alerts: []}
         ]
     };
-    initAddEdit($scope, $log, $filter, $location, catServicesHolder, false);
+    initAddEdit($scope, $log, $filter, $state, catServicesHolder, false);
 }
-function editIntakeController($scope, $log, $filter, $location, catServicesHolder, catQueryResult) {
+function editIntakeController($scope, $log, $filter, $state, catServicesHolder, catQueryResult) {
     $scope.cat = {};
     angular.forEach(catQueryResult.data.data, function (cat, key) {
         $scope.cat = cat;
@@ -63,6 +63,10 @@ function editIntakeController($scope, $log, $filter, $location, catServicesHolde
                 // If animalDeclawed is set, make sure that at least one of declawed front or back is set.
                 $scope.cat.declawed.front = true;
             }
+            if (!$scope.cat.declawed) {
+                // Just in case
+                $scope.cat.declawed = {front: false, back: false};
+            }
             $scope.cat.vaccinations = decodedCat.vaccinations;
             if ($scope.cat.vaccinations.length < 1) {
                 $scope.cat.vaccinations.push({name: "", date: "", alerts: []});
@@ -78,9 +82,9 @@ function editIntakeController($scope, $log, $filter, $location, catServicesHolde
     // Do some transformations
     $scope.cat.animalReceivedDate = new Date($scope.cat.animalReceivedDate);
     $scope.cat.animalBirthdate = new Date($scope.cat.animalBirthdate);
-    initAddEdit($scope, $log, $filter, $location, catServicesHolder, true);
+    initAddEdit($scope, $log, $filter, $state, catServicesHolder, true);
 }
-function initAddEdit($scope, $log, $filter, $location, catServicesHolder, isEdit) {
+function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
     $scope.dobAlerts = [];
     $scope.admittedAlerts = [];
     $scope.setAge = function () {
@@ -148,7 +152,7 @@ function initAddEdit($scope, $log, $filter, $location, catServicesHolder, isEdit
             $scope.cat.vaccinations[vaccinationIndex].alerts.splice(0, 1);
         }
     };
-    $scope.saveCat = function (isValid) {
+    $scope.saveCat = function (isValid, nextState) {
         if (!isValid) {
             // The user should never see this, it's a fail-safe.
             alert("There is an error on the form. Please check the information entered.");
@@ -197,7 +201,7 @@ function initAddEdit($scope, $log, $filter, $location, catServicesHolder, isEdit
             if (success) {
                 catServicesHolder.growl.addSuccessMessage("Successfully " + (isEdit ? "Edited" : "Added") + " " +
                     $scope.cat.animalName, {ttl: 5000});
-                $location.path("/");
+                $state.go(nextState);
             } else {
                 catServicesHolder.growl.addErrorMessage("Error encountered: " +
                     JSON.stringify(ret.data.messages.recordMessages, null, " "));
