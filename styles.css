@@ -7,7 +7,7 @@
     See http://www.w3.org/Style/Examples/007/center.en.html#vertical3
     See http://stackoverflow.com/questions/15464055/css-transition-effect-makes-image-blurry-moves-image-1px-in-chrome
 */
-div#loading {
+div.loading {
     position: absolute;
     top: 50%;
     left: 50%;

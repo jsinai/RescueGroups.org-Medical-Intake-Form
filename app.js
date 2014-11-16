@@ -23,11 +23,6 @@ catsApp.config(function ($stateProvider) {
             templateUrl: 'list.html',
             data: {
                 authenticate: true
-            },
-            resolve: {
-                catQueryResult: function (getAllCats, $stateParams) {
-                    return getAllCats.getData($stateParams.status);
-                }
             }
         }).
         state('addCat', {
