@@ -52,6 +52,9 @@
             </a>
         </th>
         <th>Name</th>
+        <th>Breed</th>
+        <th>Color</th>
+        <th>Gender</th>
         <th>Room</th>
     </tr>
     </thead>
@@ -61,6 +64,9 @@
                                                             style="cursor: pointer; max-width:100px; max-height:100px"
                                                             class="img-rounded"></a></td>
         <td><a ui-sref="editCat({catId:cat.animalID})">{{cat.animalName}}</a></td>
+        <td>{{cat.animalBreed}}</td>
+        <td>{{cat.animalColor}}</td>
+        <td>{{cat.animalSex}}</td>
         <td>{{cat.locationName}}</td>
     </tr>
     </tbody>
