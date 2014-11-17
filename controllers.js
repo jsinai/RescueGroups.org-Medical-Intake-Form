@@ -312,10 +312,10 @@ function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
             return;
         }
         var taken = $filter('filter')($scope.catNames, $scope.cat.animalName);
-        var takenAlerts = $filter('filter')($scope.nameAlerts, 'Name is already given to an available cat');
+        var takenAlerts = $filter('filter')($scope.nameAlerts, 'Name is already taken');
         if (taken.length > 0 && taken[0].toUpperCase() === $scope.cat.animalName.toUpperCase()) {
             if (takenAlerts.length < 1) {
-                $scope.nameAlerts.push({type: 'danger', msg: 'Name is already given to an available cat'});
+                $scope.nameAlerts.push({type: 'danger', msg: 'Name is already taken'});
             }
         } else {
             if (takenAlerts.length > 0) {

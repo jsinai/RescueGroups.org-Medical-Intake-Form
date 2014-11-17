@@ -212,11 +212,27 @@ catsApp.service('getCatNamesService',
                     "fields": [
                         "animalName"
                     ],
+                    "filterProcessing": "(1 or 2 or 3 or 4) and 5",
                     "filters": [
                         {
                             "fieldName": "animalStatus",
                             "operation": "equals",
                             "criteria": "Available"
+                        },
+                        {
+                            "fieldName": "animalStatus",
+                            "operation": "equals",
+                            "criteria": "Not Available"
+                        },
+                        {
+                            "fieldName": "animalStatus",
+                            "operation": "equals",
+                            "criteria": "Hold"
+                        },
+                        {
+                            "fieldName": "animalStatus",
+                            "operation": "equals",
+                            "criteria": "Treatment"
                         },
                         {
                             "fieldName": "animalOrgID",
