@@ -9,7 +9,7 @@ function medicalIntakeController($scope, $log, $filter, $state, catServicesHolde
         animalSex: "",
         animalColor: "",
         animalBreed: "",
-        animalCoatLength: "",
+        animalCoatLength: "Short",
         animalMicrochipVendor: "",
         animalMicrochipNumber: "",
         animalNotes: "",
@@ -21,6 +21,8 @@ function medicalIntakeController($scope, $log, $filter, $state, catServicesHolde
         admitted: "",
         whereAltered: "",
         declawed: {front: false, back: false},
+        felvTest: {result: "", date: "", alerts: []},
+        fivTest: {result: "", date: "", alerts: []},
         vaccinations: [
             {name: "", date: "", alerts: []}
         ]
@@ -39,6 +41,8 @@ function editIntakeController($scope, $log, $filter, $state, catServicesHolder, 
         $scope.cat.source = "";
         $scope.cat.whereAltered = "";
         $scope.cat.declawed = {front: false, back: false};
+        $scope.cat.felvTest = {result: "", date: "", alerts: []};
+        $scope.cat.fivTest = {result: "", date: "", alerts: []};
         $scope.cat.vaccinations = [
             {name: "", date: "", alerts: []}
         ];
@@ -67,6 +71,8 @@ function editIntakeController($scope, $log, $filter, $state, catServicesHolder, 
                 // Just in case
                 $scope.cat.declawed = {front: false, back: false};
             }
+            $scope.cat.felvTest = decodedCat.felvTest;
+            $scope.cat.fivTest = decodedCat.fivTest;
             $scope.cat.vaccinations = decodedCat.vaccinations;
             if ($scope.cat.vaccinations.length < 1) {
                 $scope.cat.vaccinations.push({name: "", date: "", alerts: []});
@@ -87,26 +93,23 @@ function editIntakeController($scope, $log, $filter, $state, catServicesHolder, 
 function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
     $scope.dobAlerts = [];
     $scope.admittedAlerts = [];
-    $scope.setAge = function () {
+
+    $scope.validateFutureDate = function (alerts, dateToCheck) {
         var today = new Date();
-        if ($scope.cat.animalBirthdate > today) {
-            var futureDobAlerts = $filter('filter')($scope.dobAlerts, 'Date cannot be in the future');
-            if (futureDobAlerts.length < 1) {
-                $scope.dobAlerts.push({type: 'danger', msg: 'Date cannot be in the future'});
+        if (dateToCheck > today) {
+            var futureAlerts = $filter('filter')(alerts, 'Date cannot be in the future');
+            if (futureAlerts.length < 1) {
+                alerts.push({type: 'danger', msg: 'Date cannot be in the future'});
             }
         } else {
-            $scope.dobAlerts.splice(0, 1);
+            alerts.splice(0, 1);
         }
-        var futureAdmittedAlerts = $filter('filter')($scope.admittedAlerts, 'Date cannot be in the future');
-        if ($scope.cat.animalReceivedDate > today) {
-            if (futureAdmittedAlerts.length < 1) {
-                $scope.admittedAlerts.push({type: 'danger', msg: 'Date cannot be in the future'});
-            }
-        } else {
-            if (futureAdmittedAlerts.length > 0) {
-                $scope.admittedAlerts.splice(0, 1);
-            }
-        }
+        return today;
+    };
+
+    $scope.setAge = function () {
+        $scope.validateFutureDate($scope.dobAlerts, $scope.cat.animalBirthdate);
+        $scope.validateFutureDate($scope.admittedAlerts, $scope.cat.animalReceivedDate);
         var dobLaterThanIntakeAlerts = $filter('filter')($scope.admittedAlerts,
             'Intake Date cannot be earlier than Estimated Date of Birth');
         if ($scope.cat.animalReceivedDate < $scope.cat.animalBirthdate) {
@@ -143,14 +146,8 @@ function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
         $scope.cat.animalStatusID = $scope.selectedStatus.id;
     };
     $scope.validateVaccinationDate = function (vaccinationIndex) {
-        if ($scope.cat.vaccinations[vaccinationIndex].date > new Date()) {
-            var futureVaccinationAlerts = $filter('filter')($scope.dobAlerts, 'Date cannot be in the future');
-            if (futureVaccinationAlerts.length < 1) {
-                $scope.cat.vaccinations[vaccinationIndex].alerts.push({type: 'danger', msg: 'Date cannot be in the future'});
-            }
-        } else {
-            $scope.cat.vaccinations[vaccinationIndex].alerts.splice(0, 1);
-        }
+        $scope.validateFutureDate($scope.cat.vaccinations[vaccinationIndex].alerts,
+            $scope.cat.vaccinations[vaccinationIndex].date);
     };
     $scope.saveCat = function (isValid, nextState) {
         if (!isValid) {
@@ -342,7 +339,8 @@ function loginController($state, $scope, growl, loginService, catState) {
         });
     };
 }
-function listController($scope, getAllCats, $stateParams) {
+
+function listController($scope, $stateParams, $state, growl, getAllCats, findCatByName) {
     $scope.cats = [];
     $scope.showSpinner = true;
     var promise = getAllCats.getData($stateParams.status);
@@ -376,4 +374,22 @@ function listController($scope, getAllCats, $stateParams) {
     $scope.pageChanged = function () {
         console.log('Page changed to: ' + $scope.currentPage);
     };
+    $scope.catSearchCriterion="";
+    $scope.findCatByName = function() {
+        var promise = findCatByName.getData($scope.catName);
+        promise.then(function (ret) {
+            var result = ret.data.data;
+            if (result.length<1) {
+                growl.addErrorMessage("No cat found by that name");
+                return;
+            }
+            angular.forEach(result, function (value, key) {
+                $state.go("editCat", {catId: key});
+            });
+        });
+        promise.error(function (msg) {
+            growl.addErrorMessage(msg);
+        });
+    };
+
 }

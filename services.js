@@ -1,7 +1,7 @@
 'use strict';
 
-//catsApp.constant('rgApi', 'https://api.rescuegroups.org/http/json');
-catsApp.constant('rgApi', 'http://test-api.rescuegroups.org/http/json');
+catsApp.constant('rgApi', 'https://api.rescuegroups.org/http/json');
+//catsApp.constant('rgApi', 'http://test-api.rescuegroups.org/http/json');
 
 catsApp.factory('catServicesHolder',
     function ($log, $filter, $location, catState, getCatNamesService, getBreedsService, getColorsService,
@@ -29,6 +29,8 @@ catsApp.service('addEditCatService',
                 source: cat.source,
                 whereAltered: cat.whereAltered,
                 declawed: cat.declawed,
+                felvTest: cat.felvTest,
+                fivTest: cat.fivTest,
                 vaccinations: cat.vaccinations
             };
             var encodedCat = btoa(JSON.stringify(catToEncode));
@@ -184,6 +186,40 @@ catsApp.service('getOneCat',
                             "fieldName": "animalID",
                             "operation": "equals",
                             "criteria": catId
+                        }
+                    ]
+                }
+            };
+            return $http({
+                method: 'POST',
+                url: rgApi,
+                data: postData
+            })
+        }
+    }
+);
+catsApp.service('findCatByName',
+    function ($http, rgApi, catState) {
+        this.getData = function (catName) {
+            var postData =
+            {
+                "token": catState.getState().token,
+                "tokenHash": catState.getState().tokenHash,
+                "objectType": "animals",
+                "objectAction": "search",
+                "search": {
+                    "calcFoundRows": "Yes",
+                    "resultStart": 0,
+                    "resultLimit": 1,
+                    "fields": [
+                        "animalID",
+                        "animalName",
+                    ],
+                    "filters": [
+                        {
+                            "fieldName": "animalName",
+                            "operation": "equals",
+                            "criteria": catName
                         }
                     ]
                 }
