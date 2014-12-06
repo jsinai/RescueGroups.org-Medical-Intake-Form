@@ -223,6 +223,27 @@
             </alert>
         </div>
     </div>
+    <div class="col-sm-3">
+        <div class="form-group required">
+            <label class="control-label" for="felv-test-result">FIV Test Result</label> <select
+                class="form-control" id="fiv-test-result" ng-model="cat.fivTestResult"
+                ng-options="choice for choice in ['Negative', 'Positive', 'ND']">
+            <option value="">-- choose one --</option>
+        </select>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label for="fiv-test-date">FIV Test Date of Birth</label> <input type="date" class="form-control"
+                                                                               id="fiv-test-date"
+                                                                               name="catFivTestDate"
+                                                                               ng-model="cat.fivTest.date"
+                                                                               ng-change="validateFutureDate(cat.fivTest.alerts, cat.fivTest.date)">
+            <alert ng-repeat="alert in cat.fivTest.alerts" type="{{alert.type}}" close="cat.fivTest.alerts.splice(0, 1)">
+                {{alert.msg}}
+            </alert>
+        </div>
+    </div>
 </div>
 <div class="row">
     <fieldset>

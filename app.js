@@ -10,11 +10,6 @@ catsApp.config(function ($stateProvider) {
             templateUrl: 'list.html',
             data: {
                 authenticate: true
-            },
-            resolve: {
-                catQueryResult: function (getAllCats) {
-                    return getAllCats.getData();
-                }
             }
         }).
         state('filteredList', {

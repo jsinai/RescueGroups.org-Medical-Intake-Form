@@ -88,6 +88,8 @@ function editIntakeController($scope, $log, $filter, $state, catServicesHolder, 
     // Do some transformations
     $scope.cat.animalReceivedDate = new Date($scope.cat.animalReceivedDate);
     $scope.cat.animalBirthdate = new Date($scope.cat.animalBirthdate);
+    $scope.cat.felvTest.date = new Date($scope.cat.felvTest.date);
+    $scope.cat.fivTest.date = new Date($scope.cat.fivTest.date);
     initAddEdit($scope, $log, $filter, $state, catServicesHolder, true);
 }
 function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
@@ -340,19 +342,28 @@ function loginController($state, $scope, growl, loginService, catState) {
     };
 }
 
-function listController($scope, $stateParams, $state, growl, getAllCats, findCatByName) {
+function listController($scope, $state, growl, catState, getAllCats, findCatByName) {
     $scope.cats = [];
     $scope.showSpinner = true;
-    var promise = getAllCats.getData($stateParams.status);
-    promise.then(function (ret) {
-        angular.forEach(ret.data.data, function (cat, key) {
-            $scope.cats.push(cat);
+    $scope.status = catState.getState().status;
+    $scope.queryCats = function () {
+        $scope.cats = [];
+        $scope.showSpinner = true;
+        var promise = getAllCats.getData($scope.status);
+        promise.then(function (ret) {
+            angular.forEach(ret.data.data, function (cat, key) {
+                $scope.cats.push(cat);
+            });
+            $scope.showSpinner = false;
         });
-        $scope.showSpinner = false;
-    });
-    promise.error(function (msg) {
-        growl.addErrorMessage(msg);
-    });
+        promise.error(function (msg) {
+            growl.addErrorMessage(msg);
+        });
+    };
+    $scope.$watch('status', function () {
+        catState.getState().status = $scope.status;
+        $scope.queryCats();
+    }, true);
     $scope.catFilter = "";
     $scope.sort = {
         column: 'name',
@@ -374,12 +385,12 @@ function listController($scope, $stateParams, $state, growl, getAllCats, findCat
     $scope.pageChanged = function () {
         console.log('Page changed to: ' + $scope.currentPage);
     };
-    $scope.catSearchCriterion="";
-    $scope.findCatByName = function() {
+    $scope.catSearchCriterion = "";
+    $scope.findCatByName = function () {
         var promise = findCatByName.getData($scope.catName);
         promise.then(function (ret) {
             var result = ret.data.data;
-            if (result.length<1) {
+            if (result.length < 1) {
                 growl.addErrorMessage("No cat found by that name");
                 return;
             }

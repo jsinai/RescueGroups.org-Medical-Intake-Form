@@ -121,11 +121,6 @@ catsApp.service('getAllCats',
                     ],
                     "filters": [
                         {
-                            "fieldName": "animalStatus",
-                            "operation": "equals",
-                            "criteria": status || "Available"
-                        },
-                        {
                             "fieldName": "animalOrgID",
                             "operation": "equals",
                             "criteria": "910"
@@ -133,6 +128,20 @@ catsApp.service('getAllCats',
                     ]
                 }
             };
+            var orCriteria = [];
+            angular.forEach(status, function (value, key) {
+                if (value.selected) {
+                    postData.search.filters.push(
+                        {
+                            "fieldName": "animalStatus",
+                            "operation": "equals",
+                            "criteria": value.rgStr
+                        }
+                    );
+                    orCriteria.push((orCriteria.length + 2).toString());
+                }
+            });
+            postData.search.filterProcessing = "1 and (" + orCriteria.join(" or ") + ")";
             return $http({
                 method: 'POST',
                 url: rgApi,
@@ -213,7 +222,7 @@ catsApp.service('findCatByName',
                     "resultLimit": 1,
                     "fields": [
                         "animalID",
-                        "animalName",
+                        "animalName"
                     ],
                     "filters": [
                         {
@@ -447,7 +456,15 @@ catsApp.service('catUtils',
 catsApp.service('catState',
     function (ipCookie) {
         var state = {
-            token: "", tokenHash: ""
+            token: "", tokenHash: "",
+            status: {
+                available: {rgStr: 'Available', selected: true},
+                hold: {rgStr: 'Hold', selected: false},
+                notAvailable: {rgStr: 'Not Available', selected: false},
+                treatment: {rgStr: 'Treatment', selected: false},
+                dead: {rgStr: 'Passed Away', selected: false},
+                adopted: {rgStr: 'Adopted', selected: false}
+            }
         };
         if (ipCookie("rgToken") && ipCookie("rgTokenHash")) {
             state.token = ipCookie("rgToken");
