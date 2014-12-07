@@ -24,7 +24,7 @@ div.loading {
 
 /* Make glyphs bigger than default */
 .glyphicon {
-    font-size: 32px;
+    font-size: 2.5em;
     font-weight: bold;
 }
 
