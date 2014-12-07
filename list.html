@@ -12,21 +12,13 @@
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
+            <ul class="nav navbar-nav navbar-left">
                 <li class="active"><a ui-sref="list">Cats</a></li>
-                <li><a ui-sref="login">Log In</a></li>
-                <li><a ui-sref="logout">Log Out</a></li>
             </ul>
             <form class="navbar-form navbar-left" role="search">
                 <div class="form-group">
                     <input type="text" class="form-control" placeholder="Filter" ng-model="catFilter">
                 </div>
-            </form>
-            <form class="navbar-form navbar-left" role="search">
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Cat Name" ng-model="catName">
-                </div>
-                <button type="submit" class="btn btn-default" ng-click="findCatByName()">Search</button>
             </form>
             <div class="btn-group"
                  tooltip-html-unsafe="Av=Available<br/>H=Hold<br/>NA=Not Available<br/>T=Treatment<br/>Ad=Adopted<br/>PA=Passed Away"
@@ -38,6 +30,16 @@
                 <label class="btn btn-primary navbar-btn" ng-model="status.adopted.selected" btn-checkbox>Ad</label>
                 <label class="btn btn-primary navbar-btn" ng-model="status.dead.selected" btn-checkbox>PA</label>
             </div>
+            <form class="navbar-form navbar-right" role="search">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Cat Name" ng-model="catName">
+                </div>
+                <button type="submit" class="btn btn-default" ng-click="findCatByName()">Search</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a ui-sref="login" ng-hide="loggedIn">Log In</a></li>
+                <li><a ui-sref="logout" ng-show="loggedIn">Log Out</a></li>
+            </ul>
         </div>
     </div>
 </nav>
@@ -56,6 +58,9 @@
         <th>Color</th>
         <th>Gender</th>
         <th>Room</th>
+        <th>Microchip ID</th>
+        <th>FELV Status</th>
+        <th>FIV Status</th>
     </tr>
     </thead>
     <tbody>
@@ -68,6 +73,9 @@
         <td>{{cat.animalColor}}</td>
         <td>{{cat.animalSex}}</td>
         <td>{{cat.locationName}}</td>
+        <td>{{cat.animalMicrochipNumber}}</td>
+        <td>{{cat.felvTest.result}}</td>
+        <td>{{cat.fivTest.result}}</td>
     </tr>
     </tbody>
 </table>

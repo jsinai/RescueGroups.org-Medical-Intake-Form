@@ -22,3 +22,7 @@ div.loading {
     background-color: #4996DA;
 }
 
+.glyphicon {
+    font-size: 32px;
+    font-weight: bold;
+}

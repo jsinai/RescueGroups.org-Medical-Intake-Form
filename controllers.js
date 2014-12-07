@@ -207,7 +207,7 @@ function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
             }
         });
         promise.error(function (msg) {
-            catServicesHolder.growl.addErrorMessage(msg);
+            catServicesHolder.growl.addErrorMessage(msg||"Error " + (isEdit ? "Editing" : "Adding") + " cat");
         });
     };
 
@@ -337,7 +337,7 @@ function loginController($state, $scope, growl, loginService, catState) {
             }
         });
         promise.error(function (msg) {
-            growl.addErrorMessage(msg);
+            growl.addErrorMessage(msg||"Error logging in");
         });
     };
 }
@@ -355,9 +355,12 @@ function listController($scope, $state, growl, catState, getAllCats, findCatByNa
                 $scope.cats.push(cat);
             });
             $scope.showSpinner = false;
+            if ($scope.cats.length<1) {
+                growl.addInfoMessage("No results returned")
+            }
         });
         promise.error(function (msg) {
-            growl.addErrorMessage(msg);
+            growl.addErrorMessage(msg||"Error retrieving cats");
         });
     };
     $scope.$watch('status', function () {
@@ -399,8 +402,8 @@ function listController($scope, $state, growl, catState, getAllCats, findCatByNa
             });
         });
         promise.error(function (msg) {
-            growl.addErrorMessage(msg);
+            growl.addErrorMessage(msg||"Error encountered retrieving cat by name");
         });
     };
-
+    $scope.loggedIn=catState.getState().token || catState.getState().tokenHash;
 }
