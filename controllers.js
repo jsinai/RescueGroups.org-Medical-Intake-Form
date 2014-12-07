@@ -63,7 +63,7 @@ function editIntakeController($scope, $log, $filter, $state, catServicesHolder, 
             $scope.cat.source = decodedCat.source;
             $scope.cat.whereAltered = decodedCat.whereAltered;
             $scope.cat.declawed = decodedCat.declawed;
-            if ($scope.cat.animalDeclawed && !($scope.cat.declawed.front || $scope.cat.declawed.back)) {
+            if ($scope.cat.animalDeclawed==="Yes" && !($scope.cat.declawed.front || $scope.cat.declawed.back)) {
                 // If animalDeclawed is set, make sure that at least one of declawed front or back is set.
                 $scope.cat.declawed.front = true;
             }

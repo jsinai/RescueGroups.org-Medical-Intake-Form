@@ -22,7 +22,13 @@ div.loading {
     background-color: #4996DA;
 }
 
+/* Make glyphs bigger than default */
 .glyphicon {
     font-size: 32px;
     font-weight: bold;
+}
+
+/* Prevent growls from competing with the navbar */
+.growl {
+    top: 60px;
 }
