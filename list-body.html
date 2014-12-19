@@ -1,0 +1,37 @@
+<div class="loading" ng-show="showSpinner">
+    <h1>Loading...</h1>
+</div>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            <a ui-sref="addCat" title="Add new cat"> <span class="glyphicon glyphicon-plus"></span> </a>
+        </th>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Breed</th>
+        <th>Color</th>
+        <th>Gender</th>
+        <th>Room</th>
+        <th>Microchip ID</th>
+        <th>FELV Status</th>
+        <th>FIV Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="cat in cats|filter: catFilter">
+        <td><a ui-sref="editCat({catId:cat.animalID})"><img ng-src="{{cat.animalPictures[0].urlInsecureThumbnail}}"
+                                                            style="cursor: pointer; max-width:100px; max-height:100px"
+                                                            class="img-rounded"></a></td>
+        <td><a ui-sref="editCat({catId:cat.animalID})">{{cat.animalName}}</a></td>
+        <td>{{cat.animalStatus}}</td>
+        <td>{{cat.animalBreed}}</td>
+        <td>{{cat.animalColor}}</td>
+        <td>{{cat.animalSex}}</td>
+        <td>{{cat.locationName}}</td>
+        <td>{{cat.animalMicrochipNumber}}</td>
+        <td>{{cat.felvTest.result}}</td>
+        <td>{{cat.fivTest.result}}</td>
+    </tr>
+    </tbody>
+</table>
