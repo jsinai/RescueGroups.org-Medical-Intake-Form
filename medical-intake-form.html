@@ -205,7 +205,7 @@
     <div class="col-sm-3">
         <div class="form-group required">
             <label class="control-label" for="felv-test-result">FELV Test Result</label> <select
-                class="form-control" id="felv-test-result" ng-model="cat.felvTestResult"
+                class="form-control" id="felv-test-result" ng-model="cat.felvTest.result"
                 ng-options="choice for choice in ['Negative', 'Positive', 'ND']">
             <option value="">-- choose one --</option>
         </select>
@@ -213,7 +213,7 @@
     </div>
     <div class="col-sm-3">
         <div class="form-group">
-            <label for="felv-test-date">FELV Test Date of Birth</label> <input type="date" class="form-control"
+            <label for="felv-test-date">FELV Test Date</label> <input type="date" class="form-control"
                                                                                id="felv-test-date"
                                                                                name="catFelvTestDate"
                                                                                ng-model="cat.felvTest.date"
@@ -226,7 +226,7 @@
     <div class="col-sm-3">
         <div class="form-group required">
             <label class="control-label" for="felv-test-result">FIV Test Result</label> <select
-                class="form-control" id="fiv-test-result" ng-model="cat.fivTestResult"
+                class="form-control" id="fiv-test-result" ng-model="cat.fivTest.result"
                 ng-options="choice for choice in ['Negative', 'Positive', 'ND']">
             <option value="">-- choose one --</option>
         </select>
@@ -234,7 +234,7 @@
     </div>
     <div class="col-sm-3">
         <div class="form-group">
-            <label for="fiv-test-date">FIV Test Date of Birth</label> <input type="date" class="form-control"
+            <label for="fiv-test-date">FIV Test Date</label> <input type="date" class="form-control"
                                                                                id="fiv-test-date"
                                                                                name="catFivTestDate"
                                                                                ng-model="cat.fivTest.date"

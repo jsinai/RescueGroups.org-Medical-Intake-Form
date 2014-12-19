@@ -72,7 +72,13 @@ function editIntakeController($scope, $log, $filter, $state, catServicesHolder, 
                 $scope.cat.declawed = {front: false, back: false};
             }
             $scope.cat.felvTest = decodedCat.felvTest;
+            if (! $scope.cat.felvTest.date) {
+                $scope.cat.felvTest.date = "";
+            }
             $scope.cat.fivTest = decodedCat.fivTest;
+            if (! $scope.cat.fivTest.date) {
+                $scope.cat.fivTest.date = "";
+            }
             $scope.cat.vaccinations = decodedCat.vaccinations;
             if ($scope.cat.vaccinations.length < 1) {
                 $scope.cat.vaccinations.push({name: "", date: "", alerts: []});
