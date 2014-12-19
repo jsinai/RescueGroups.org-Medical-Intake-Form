@@ -393,8 +393,14 @@ function listController($scope, $state, growl, catState, getAllCats, findCatByNa
         var promise = findCatByName.getData($scope.catName);
         promise.then(function (ret) {
             var result = ret.data.data;
-            if (result.length < 1) {
+            var resultLength = Object.keys(result).length;
+            if (resultLength < 1) {
                 growl.addErrorMessage("No cat found by that name");
+                return;
+            }
+            if (resultLength > 1) {
+                catState.getState().foundCats = result;
+                $state.go("findCat");
                 return;
             }
             angular.forEach(result, function (value, key) {
@@ -406,4 +412,10 @@ function listController($scope, $state, growl, catState, getAllCats, findCatByNa
         });
     };
     $scope.loggedIn=catState.getState().token || catState.getState().tokenHash;
+}
+function findCatController($scope, $state, growl, catState, getAllCats, findCatByName) {
+    $scope.cats = [];
+    angular.forEach(catState.getState().foundCats, function (cat, key) {
+        $scope.cats.push(cat);
+    });
 }

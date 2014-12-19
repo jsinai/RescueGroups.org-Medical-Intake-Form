@@ -20,6 +20,14 @@ catsApp.config(function ($stateProvider) {
                 authenticate: true
             }
         }).
+        state('findCat', {
+            url: "/find-cat",
+            controller: findCatController,
+            templateUrl: 'find-cat.html',
+            data: {
+                authenticate: true
+            }
+        }).
         state('addCat', {
             url: "/add",
             controller: medicalIntakeController,

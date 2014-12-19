@@ -219,10 +219,18 @@ catsApp.service('findCatByName',
                 "search": {
                     "calcFoundRows": "Yes",
                     "resultStart": 0,
-                    "resultLimit": 1,
+                    "resultLimit": 100,
                     "fields": [
                         "animalID",
-                        "animalName"
+                        "animalName",
+                        "animalBreed",
+                        "animalColor",
+                        "animalMicrochipNumber",
+                        "animalOrigin",
+                        "animalPictures",
+                        "animalSex",
+                        "animalStatus",
+                        "locationName"
                     ],
                     "filters": [
                         {
@@ -464,7 +472,8 @@ catsApp.service('catState',
                 treatment: {rgStr: 'Treatment', selected: false},
                 dead: {rgStr: 'Passed Away', selected: false},
                 adopted: {rgStr: 'Adopted', selected: false}
-            }
+            },
+            foundCats: []
         };
         if (ipCookie("rgToken") && ipCookie("rgTokenHash")) {
             state.token = ipCookie("rgToken");
