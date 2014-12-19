@@ -91,32 +91,15 @@ catsApp.service('getAllCats',
                     "resultSort": "animalName",
                     "resultOrder": "asc",
                     "fields": [
-                        "animalAdoptedDate",
-                        "animalAltered",
-                        "animalBirthdate",
-                        "animalBreed",
-                        "animalCoatLength",
-                        "animalColor",
-                        "animalColorID",
-                        "animalDeclawed",
-                        "animalDescriptionPlain",
-                        "animalEyeColor",
-                        "animalGeneralAge",
                         "animalID",
+                        "animalBreed",
+                        "animalColor",
                         "animalMicrochipNumber",
-                        "animalMicrochipVendor",
                         "animalName",
-                        "animalNotes",
-                        "animalPattern",
+                        "animalOrigin",
                         "animalPictures",
-                        "animalPrimaryBreedID",
-                        "animalQualities",
-                        "animalReceivedDate",
                         "animalSex",
-                        "animalSpecialneeds",
-                        "animalSpecies",
                         "animalStatus",
-                        "animalStatusID",
                         "locationName"
                     ],
                     "filters": [
@@ -195,6 +178,11 @@ catsApp.service('getOneCat',
                             "fieldName": "animalID",
                             "operation": "equals",
                             "criteria": catId
+                        },
+                        {
+                            "fieldName": "animalOrgID",
+                            "operation": "equals",
+                            "criteria": "910"
                         }
                     ]
                 }
@@ -222,10 +210,10 @@ catsApp.service('findCatByName',
                     "resultLimit": 100,
                     "fields": [
                         "animalID",
-                        "animalName",
                         "animalBreed",
                         "animalColor",
                         "animalMicrochipNumber",
+                        "animalName",
                         "animalOrigin",
                         "animalPictures",
                         "animalSex",
@@ -237,6 +225,11 @@ catsApp.service('findCatByName',
                             "fieldName": "animalName",
                             "operation": "equals",
                             "criteria": catName
+                        },
+                        {
+                            "fieldName": "animalOrgID",
+                            "operation": "equals",
+                            "criteria": "910"
                         }
                     ]
                 }
