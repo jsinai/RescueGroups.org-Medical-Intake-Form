@@ -63,7 +63,7 @@ function editIntakeController($scope, $log, $filter, $state, catServicesHolder, 
             $scope.cat.source = decodedCat.source;
             $scope.cat.whereAltered = decodedCat.whereAltered;
             $scope.cat.declawed = decodedCat.declawed;
-            if ($scope.cat.animalDeclawed==="Yes" && !($scope.cat.declawed.front || $scope.cat.declawed.back)) {
+            if ($scope.cat.animalDeclawed === "Yes" && !($scope.cat.declawed.front || $scope.cat.declawed.back)) {
                 // If animalDeclawed is set, make sure that at least one of declawed front or back is set.
                 $scope.cat.declawed.front = true;
             }
@@ -72,11 +72,17 @@ function editIntakeController($scope, $log, $filter, $state, catServicesHolder, 
                 $scope.cat.declawed = {front: false, back: false};
             }
             $scope.cat.felvTest = decodedCat.felvTest;
-            if (! $scope.cat.felvTest.date) {
+            if (!$scope.cat.felvTest) {
+                $scope.cat.felvTest = {result: "", date: "", alerts: []};
+            }
+            if (!$scope.cat.felvTest.date) {
                 $scope.cat.felvTest.date = "";
             }
             $scope.cat.fivTest = decodedCat.fivTest;
-            if (! $scope.cat.fivTest.date) {
+            if (!$scope.cat.fivTest) {
+                $scope.cat.fivTest = {result: "", date: "", alerts: []};
+            }
+            if (!$scope.cat.fivTest.date) {
                 $scope.cat.fivTest.date = "";
             }
             $scope.cat.vaccinations = decodedCat.vaccinations;
@@ -213,7 +219,7 @@ function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
             }
         });
         promise.error(function (msg) {
-            catServicesHolder.growl.addErrorMessage(msg||"Error " + (isEdit ? "Editing" : "Adding") + " cat");
+            catServicesHolder.growl.addErrorMessage(msg || "Error " + (isEdit ? "Editing" : "Adding") + " cat");
         });
     };
 
@@ -343,12 +349,12 @@ function loginController($state, $scope, growl, loginService, catState) {
             }
         });
         promise.error(function (msg) {
-            growl.addErrorMessage(msg||"Error logging in");
+            growl.addErrorMessage(msg || "Error logging in");
         });
     };
 }
 
-function listController($scope, $state, growl, catState, getAllCats, findCatByName) {
+function listController($scope, $state, growl, catState, getAllCats, findCatByName, findCatByTypeahead) {
     $scope.cats = [];
     $scope.showSpinner = true;
     $scope.status = catState.getState().status;
@@ -361,12 +367,12 @@ function listController($scope, $state, growl, catState, getAllCats, findCatByNa
                 $scope.cats.push(cat);
             });
             $scope.showSpinner = false;
-            if ($scope.cats.length<1) {
+            if ($scope.cats.length < 1) {
                 growl.addInfoMessage("No results returned")
             }
         });
         promise.error(function (msg) {
-            growl.addErrorMessage(msg||"Error retrieving cats");
+            growl.addErrorMessage(msg || "Error retrieving cats");
         });
     };
     $scope.$watch('status', function () {
@@ -395,6 +401,23 @@ function listController($scope, $state, growl, catState, getAllCats, findCatByNa
         console.log('Page changed to: ' + $scope.currentPage);
     };
     $scope.catSearchCriterion = "";
+    $scope.findCatByTypeahead = function (searchStr) {
+        return findCatByTypeahead.getData(searchStr).
+            then(function (ret) {
+                var result = ret.data.data;
+                var uniqueCatsFound = {};
+                angular.forEach(result, function (value, key) {
+                    if (!(value.animalName in uniqueCatsFound)) {
+                        uniqueCatsFound[value.animalName] = true;
+                    }
+                });
+                var catsFound = [];
+                angular.forEach(uniqueCatsFound, function (value, key) {
+                    catsFound.push(key);
+                });
+                return catsFound;
+            });
+    };
     $scope.findCatByName = function () {
         var promise = findCatByName.getData($scope.catName);
         promise.then(function (ret) {
@@ -414,10 +437,10 @@ function listController($scope, $state, growl, catState, getAllCats, findCatByNa
             });
         });
         promise.error(function (msg) {
-            growl.addErrorMessage(msg||"Error encountered retrieving cat by name");
+            growl.addErrorMessage(msg || "Error encountered retrieving cat by name");
         });
     };
-    $scope.loggedIn=catState.getState().token || catState.getState().tokenHash;
+    $scope.loggedIn = catState.getState().token || catState.getState().tokenHash;
 }
 function findCatController($scope, $state, growl, catState, getAllCats, findCatByName) {
     $scope.cats = [];

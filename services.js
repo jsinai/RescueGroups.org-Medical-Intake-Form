@@ -242,6 +242,45 @@ catsApp.service('findCatByName',
         }
     }
 );
+catsApp.service('findCatByTypeahead',
+    function ($http, rgApi, catState) {
+        this.getData = function (catName) {
+            var postData =
+            {
+                "token": catState.getState().token,
+                "tokenHash": catState.getState().tokenHash,
+                "objectType": "animals",
+                "objectAction": "search",
+                "search": {
+                    "calcFoundRows": "Yes",
+                    "resultStart": 0,
+                    "resultLimit": 10,
+                    "fields": [
+                        "animalID",
+                        "animalName"
+                    ],
+                    "filters": [
+                        {
+                            "fieldName": "animalOrgID",
+                            "operation": "equals",
+                            "criteria": "910"
+                        },
+                        {
+                            "fieldName": "animalName",
+                            "operation": "contains",
+                            "criteria": catName
+                        }
+                    ]
+                }
+            };
+            return $http({
+                method: 'POST',
+                url: rgApi,
+                data: postData
+            })
+        }
+    }
+);
 catsApp.service('getCatNamesService',
     function ($http, rgApi, catState) {
         this.getData = function () {
