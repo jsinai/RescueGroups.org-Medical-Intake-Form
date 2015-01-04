@@ -105,7 +105,8 @@
                 <label for="cat-dob">Estimated Date of Birth</label> <input type="date" class="form-control"
                                                                             id="cat-dob" name="catDob"
                                                                             ng-model="cat.animalBirthdate"
-                                                                            ng-change="setAge()">
+                                                                            ng-change="setAge()"
+                                                                            placeholder="YYYY-MM-DD">
                 <alert ng-repeat="alert in dobAlerts" type="{{alert.type}}" close="dobAlerts.splice(0, 1)">
                     {{alert.msg}}
                 </alert>
@@ -115,7 +116,7 @@
             <div class="form-group">
                 <label class="control-label" for="admitted">Intake Date</label> <input type="date" class="form-control"
                                                                                        id="admitted"
-                                                                                       placeholder="Admitted"
+                                                                                       placeholder="YYYY-MM-DD"
                                                                                        ng-model="cat.animalReceivedDate"
                                                                                        ng-change="setAge()">
                 <alert ng-repeat="alert in admittedAlerts" type="{{alert.type}}" close="admittedAlerts.splice(0, 1)">
@@ -217,7 +218,8 @@
                                                                                id="felv-test-date"
                                                                                name="catFelvTestDate"
                                                                                ng-model="cat.felvTest.date"
-                                                                               ng-change="validateFutureDate(cat.felvTest.alerts, cat.felvTest.date)">
+                                                                               ng-change="validateFutureDate(cat.felvTest.alerts, cat.felvTest.date)"
+                                                                               placeholder="YYYY-MM-DD">
             <alert ng-repeat="alert in cat.felvTest.alerts" type="{{alert.type}}" close="cat.felvTest.alerts.splice(0, 1)">
                 {{alert.msg}}
             </alert>
@@ -238,7 +240,8 @@
                                                                                id="fiv-test-date"
                                                                                name="catFivTestDate"
                                                                                ng-model="cat.fivTest.date"
-                                                                               ng-change="validateFutureDate(cat.fivTest.alerts, cat.fivTest.date)">
+                                                                               ng-change="validateFutureDate(cat.fivTest.alerts, cat.fivTest.date)"
+                                                                                placeholder="YYYY-MM-DD">
             <alert ng-repeat="alert in cat.fivTest.alerts" type="{{alert.type}}" close="cat.fivTest.alerts.splice(0, 1)">
                 {{alert.msg}}
             </alert>
@@ -263,7 +266,7 @@
     <div class="col-sm-3">
         <div class="form-group">
             <input type="date" class="form-control" id="vaccinationDate" name="vaccinationDate"
-                   ng-model="cat.vaccinations[vaccinationIndex].date" placeholder="Vaccination Date"
+                   ng-model="cat.vaccinations[vaccinationIndex].date" placeholder="YYYY-MM-DD"
                    ng-change="validateVaccinationDate(vaccinationIndex)">
             <alert ng-repeat="alert in cat.vaccinations[vaccinationIndex].alerts" type="{{alert.type}}"
                    close="cat.vaccinations[vaccinationIndex].alerts.splice(0, 1)">
