@@ -355,6 +355,8 @@ function loginController($state, $scope, growl, loginService, catState) {
 }
 
 function listController($scope, $state, growl, catState, getAllCats, findCatByName, findCatByTypeahead) {
+    $scope.sortColumn = 'animalName';
+    $scope.sortReverse  = false;
     $scope.cats = [];
     $scope.showSpinner = true;
     $scope.status = catState.getState().status;

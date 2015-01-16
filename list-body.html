@@ -7,19 +7,55 @@
         <th>
             <a ui-sref="addCat" title="Add new cat"> <span class="glyphicon glyphicon-plus"></span> </a>
         </th>
-        <th>Name</th>
-        <th>Status</th>
-        <th>Breed</th>
-        <th>Color</th>
-        <th>Gender</th>
-        <th>Room</th>
-        <th>Microchip ID</th>
-        <th>FELV Status</th>
-        <th>FIV Status</th>
+        <th><a href="" ng-click="sortColumn = 'animalName'; sortReverse = !sortReverse">
+            Name
+            <span ng-show="sortColumn == 'animalName' && !sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="sortColumn == 'animalName' && sortReverse" class="fa fa-caret-up"></span>
+        </a></th>
+        <th><a href="" ng-click="sortColumn = 'animalStatus'; sortReverse = !sortReverse">
+            Status
+            <span ng-show="sortColumn == 'animalStatus' && !sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="sortColumn == 'animalStatus' && sortReverse" class="fa fa-caret-up"></span>
+        </a></th>
+        <th><a href="" ng-click="sortColumn = 'animalBreed'; sortReverse = !sortReverse">
+            Breed
+            <span ng-show="sortColumn == 'animalBreed' && !sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="sortColumn == 'animalBreed' && sortReverse" class="fa fa-caret-up"></span>
+        </a></th>
+        <th><a href="" ng-click="sortColumn = 'animalColor'; sortReverse = !sortReverse">
+            Color
+            <span ng-show="sortColumn == 'animalColor' && !sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="sortColumn == 'animalColor' && sortReverse" class="fa fa-caret-up"></span>
+        </a></th>
+        <th><a href="" ng-click="sortColumn = 'animalSex'; sortReverse = !sortReverse">
+            Gender
+            <span ng-show="sortColumn == 'animalSex' && !sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="sortColumn == 'animalSex' && sortReverse" class="fa fa-caret-up"></span>
+        </a></th>
+        <th><a href="" ng-click="sortColumn = 'locationName'; sortReverse = !sortReverse">
+            Room
+            <span ng-show="sortColumn == 'locationName' && !sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="sortColumn == 'locationName' && sortReverse" class="fa fa-caret-up"></span>
+        </a></th>
+        <th><a href="" ng-click="sortColumn = 'animalMicrochipNumber'; sortReverse = !sortReverse">
+            Microchip ID
+            <span ng-show="sortColumn == 'animalMicrochipNumber' && !sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="sortColumn == 'animalMicrochipNumber' && sortReverse" class="fa fa-caret-up"></span>
+        </a></th>
+        <th><a href="" ng-click="sortColumn = 'felvTest.result'; sortReverse = !sortReverse">
+            FELV Status
+            <span ng-show="sortColumn == 'felvTest.result' && !sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="sortColumn == 'felvTest.result' && sortReverse" class="fa fa-caret-up"></span>
+        </a></th>
+        <th><a href="" ng-click="sortColumn = 'fivTest.result'; sortReverse = !sortReverse">
+            FIV  Status
+            <span ng-show="sortColumn == 'fivTest.result' && !sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="sortColumn == 'fivTest.result' && sortReverse" class="fa fa-caret-up"></span>
+        </a></th>
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="cat in cats|filter: catFilter">
+    <tr ng-repeat="cat in cats|orderBy:sortColumn:sortReverse|filter: catFilter">
         <td><a ui-sref="editCat({catId:cat.animalID})"><img ng-src="{{cat.animalPictures[0].urlInsecureThumbnail}}"
                                                             style="cursor: pointer; max-width:100px; max-height:100px"
                                                             class="img-rounded"></a></td>
