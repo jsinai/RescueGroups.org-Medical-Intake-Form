@@ -54,6 +54,8 @@ function editIntakeController($scope, $log, $filter, $state, catServicesHolder, 
         if (startEncodedCat > -1) {
             encodedCat = $scope.cat.animalOrigin.substring(originNotesWarning.length);
         }
+        // Remove spaces
+        encodedCat = encodedCat.replace(/ /g, '');
         var decodedCat = atob(encodedCat);
         var jsonCat = decodedCat ? JSON.parse(decodedCat) : undefined;
         $scope.cat.version = jsonCat ? jsonCat.version : undefined;

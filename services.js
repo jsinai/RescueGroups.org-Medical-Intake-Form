@@ -34,7 +34,13 @@ catsApp.service('addEditCatService',
                 fivTest: cat.fivTest,
                 vaccinations: cat.vaccinations
             };
-            var encodedCat = originNotesWarning + btoa(JSON.stringify(catToEncode));
+            // base-64 encode to discourage editing on rescue groups site
+            var longCat = btoa(JSON.stringify(catToEncode));
+            // Split into 50 char segments to make it wrap on the rescue groups site
+            var splits = longCat.match(/.{1,50}/g);
+            var joinedCat = splits.join(' ');
+            // Add a warning to discourage editing on rescue groups site
+            var encodedCat = originNotesWarning + joinedCat;
             var description = isEdit ?
                 cat.animalDescriptionPlain :
                 cat.animalName + " (DOB " + catUtils.getFormattedDate(cat.animalBirthdate) + ") is a " +
