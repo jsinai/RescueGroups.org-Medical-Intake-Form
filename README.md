@@ -14,6 +14,7 @@ This project was an excellent application of AngularJS and supporting technologi
 - Use of Angular Growl for notifications 
 - Use of Angular Cookie for cookie expiration
 - Use of Angular UI Router for state-based routing and authentication enforcement
+- Use of Font Awesome
 - Use of promises for asynchronous queries
 - How to create and inject Angular constants, services and factories
 - Use of Github Pages for hosting a pure Javascript/CSS/HTML application
@@ -26,6 +27,7 @@ In the process, I came up to speed on best practices for these technologies:
 - Using these Angular Bootstrap's directives: Tooltips, Alerts, Typeahead
 - Using the right patterns for the select tag and ng-options
 - How to use Angular's $filter service in controller code
+- How to provide a sort capability
 - How to create my own form validators
 - How to reduce the burden of many injected services by creating my own injector container
 - How to use base64 encoding and decoding to obfuscate certain fields

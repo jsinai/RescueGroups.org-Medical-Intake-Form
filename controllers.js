@@ -29,7 +29,7 @@ function medicalIntakeController($scope, $log, $filter, $state, catServicesHolde
     };
     initAddEdit($scope, $log, $filter, $state, catServicesHolder, false);
 }
-function editIntakeController($scope, $log, $filter, $state, catServicesHolder, catQueryResult) {
+function editIntakeController($scope, $log, $filter, $state, catServicesHolder, catQueryResult, originNotesWarning) {
     $scope.cat = {};
     angular.forEach(catQueryResult.data.data, function (cat, key) {
         $scope.cat = cat;
@@ -49,20 +49,25 @@ function editIntakeController($scope, $log, $filter, $state, catServicesHolder, 
     };
     // Decode our private fields (keep in sync with addEditCatService)
     if ($scope.cat.animalOrigin) {
-        var encodedCat = atob($scope.cat.animalOrigin);
-        var decodedCat = encodedCat ? JSON.parse(encodedCat) : undefined;
-        $scope.cat.version = decodedCat ? decodedCat.version : undefined;
+        var encodedCat = $scope.cat.animalOrigin;
+        var startEncodedCat = $scope.cat.animalOrigin.indexOf(originNotesWarning);
+        if (startEncodedCat > -1) {
+            encodedCat = $scope.cat.animalOrigin.substring(originNotesWarning.length);
+        }
+        var decodedCat = atob(encodedCat);
+        var jsonCat = decodedCat ? JSON.parse(decodedCat) : undefined;
+        $scope.cat.version = jsonCat ? jsonCat.version : undefined;
         if (!$scope.cat.version) {
             // Something else was in the origin notes, so they are invalid
             // Move the origin notes to the animalNotes and start fresh
             $scope.cat.animalNotes = $scope.cat.animalNotes + "\r" + $scope.cat.animalOrigin;
             $scope.initCat();
         } else {
-            $scope.cat.age = decodedCat.age;
-            $scope.cat.weight = decodedCat.weight;
-            $scope.cat.source = decodedCat.source;
-            $scope.cat.whereAltered = decodedCat.whereAltered;
-            $scope.cat.declawed = decodedCat.declawed;
+            $scope.cat.age = jsonCat.age;
+            $scope.cat.weight = jsonCat.weight;
+            $scope.cat.source = jsonCat.source;
+            $scope.cat.whereAltered = jsonCat.whereAltered;
+            $scope.cat.declawed = jsonCat.declawed;
             if ($scope.cat.animalDeclawed === "Yes" && !($scope.cat.declawed.front || $scope.cat.declawed.back)) {
                 // If animalDeclawed is set, make sure that at least one of declawed front or back is set.
                 $scope.cat.declawed.front = true;
@@ -71,21 +76,21 @@ function editIntakeController($scope, $log, $filter, $state, catServicesHolder, 
                 // Just in case
                 $scope.cat.declawed = {front: false, back: false};
             }
-            $scope.cat.felvTest = decodedCat.felvTest;
+            $scope.cat.felvTest = jsonCat.felvTest;
             if (!$scope.cat.felvTest) {
                 $scope.cat.felvTest = {result: "", date: "", alerts: []};
             }
             if (!$scope.cat.felvTest.date) {
                 $scope.cat.felvTest.date = "";
             }
-            $scope.cat.fivTest = decodedCat.fivTest;
+            $scope.cat.fivTest = jsonCat.fivTest;
             if (!$scope.cat.fivTest) {
                 $scope.cat.fivTest = {result: "", date: "", alerts: []};
             }
             if (!$scope.cat.fivTest.date) {
                 $scope.cat.fivTest.date = "";
             }
-            $scope.cat.vaccinations = decodedCat.vaccinations;
+            $scope.cat.vaccinations = jsonCat.vaccinations;
             if ($scope.cat.vaccinations.length < 1) {
                 $scope.cat.vaccinations.push({name: "", date: "", alerts: []});
             } else {

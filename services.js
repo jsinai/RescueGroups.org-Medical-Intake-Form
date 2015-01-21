@@ -2,6 +2,7 @@
 
 catsApp.constant('rgApi', 'https://api.rescuegroups.org/http/json');
 //catsApp.constant('rgApi', 'http://test-api.rescuegroups.org/http/json');
+catsApp.constant('originNotesWarning', '== DO NOT EDIT THIS FIELD == ');
 
 catsApp.factory('catServicesHolder',
     function ($log, $filter, $location, catState, getCatNamesService, getBreedsService, getColorsService,
@@ -19,7 +20,7 @@ catsApp.factory('catServicesHolder',
         };
     });
 catsApp.service('addEditCatService',
-    function ($http, rgApi, catUtils) {
+    function ($http, rgApi, catUtils, originNotesWarning ) {
         this.addEditCat = function (token, tokenHash, cat, isEdit) {
             // Encode our private fields (keep in sync with editIntakeController)
             var catToEncode = {
@@ -33,7 +34,7 @@ catsApp.service('addEditCatService',
                 fivTest: cat.fivTest,
                 vaccinations: cat.vaccinations
             };
-            var encodedCat = btoa(JSON.stringify(catToEncode));
+            var encodedCat = originNotesWarning + btoa(JSON.stringify(catToEncode));
             var description = isEdit ?
                 cat.animalDescriptionPlain :
                 cat.animalName + " (DOB " + catUtils.getFormattedDate(cat.animalBirthdate) + ") is a " +
