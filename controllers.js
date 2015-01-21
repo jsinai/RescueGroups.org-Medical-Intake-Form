@@ -114,6 +114,7 @@ function editIntakeController($scope, $log, $filter, $state, catServicesHolder, 
 function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
     $scope.dobAlerts = [];
     $scope.admittedAlerts = [];
+    $scope.isSaving = false;
 
     $scope.validateFutureDate = function (alerts, dateToCheck) {
         var today = new Date();
@@ -176,6 +177,8 @@ function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
             alert("There is an error on the form. Please check the information entered.");
             return;
         }
+        // Disable Save buttons to avoid double submits
+        $scope.isSaving = true;
         $scope.validateCat();
 
         $log.info("Name: " + $scope.cat.animalName);
@@ -224,9 +227,11 @@ function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
                 catServicesHolder.growl.addErrorMessage("Error encountered: " +
                     JSON.stringify(ret.data.messages.recordMessages, null, " "));
             }
+            $scope.isSaving = false;
         });
         promise.error(function (msg) {
             catServicesHolder.growl.addErrorMessage(msg || "Error " + (isEdit ? "Editing" : "Adding") + " cat");
+            $scope.isSaving = false;
         });
     };
 
