@@ -20,7 +20,7 @@ catsApp.factory('catServicesHolder',
         };
     });
 catsApp.service('addEditCatService',
-    function ($http, rgApi, catUtils, originNotesWarning ) {
+    function ($http, rgApi, catUtils, originNotesWarning) {
         this.addEditCat = function (token, tokenHash, cat, isEdit) {
             // Encode our private fields (keep in sync with editIntakeController)
             var catToEncode = {
@@ -533,4 +533,21 @@ catsApp.service('catState',
             state.token = "";
             state.tokenHash = "";
         };
-    });
+    }
+);
+catsApp.service('decodeCatService',
+    function ($q) {
+        this.execute = function (cat) {
+            var worker = new Worker('decode-cat.js');
+            var defer = $q.defer();
+            // Wait for the worker to return
+            worker.addEventListener('message', function (e) {
+                var decodedCat = e.data;
+                defer.resolve(decodedCat);
+            }, false);
+            // Send data to our worker.
+            worker.postMessage(cat);
+            return defer.promise;
+        }
+    }
+);

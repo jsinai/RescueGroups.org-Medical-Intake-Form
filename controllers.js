@@ -29,86 +29,26 @@ function medicalIntakeController($scope, $log, $filter, $state, catServicesHolde
     };
     initAddEdit($scope, $log, $filter, $state, catServicesHolder, false);
 }
-function editIntakeController($scope, $log, $filter, $state, catServicesHolder, catQueryResult, originNotesWarning) {
+function editIntakeController($scope, $log, $filter, $state, catServicesHolder, catQueryResult, decodeCatService) {
     $scope.cat = {};
     angular.forEach(catQueryResult.data.data, function (cat, key) {
         $scope.cat = cat;
     });
-    $scope.initCat = function () {
-        $scope.cat.version = "1.0.0";
-        $scope.cat.age = "";
-        $scope.cat.weight = "";
-        $scope.cat.source = "";
-        $scope.cat.whereAltered = "";
-        $scope.cat.declawed = {front: false, back: false};
-        $scope.cat.felvTest = {result: "", date: "", alerts: []};
-        $scope.cat.fivTest = {result: "", date: "", alerts: []};
-        $scope.cat.vaccinations = [
-            {name: "", date: "", alerts: []}
-        ];
-    };
-    // Decode our private fields (keep in sync with addEditCatService)
-    if ($scope.cat.animalOrigin) {
-        var encodedCat = $scope.cat.animalOrigin;
-        var startEncodedCat = $scope.cat.animalOrigin.indexOf(originNotesWarning);
-        if (startEncodedCat > -1) {
-            encodedCat = $scope.cat.animalOrigin.substring(originNotesWarning.length);
-        }
-        // Remove spaces
-        encodedCat = encodedCat.replace(/ /g, '');
-        var decodedCat = atob(encodedCat);
-        var jsonCat = decodedCat ? JSON.parse(decodedCat) : undefined;
-        $scope.cat.version = jsonCat ? jsonCat.version : undefined;
-        if (!$scope.cat.version) {
-            // Something else was in the origin notes, so they are invalid
-            // Move the origin notes to the animalNotes and start fresh
-            $scope.cat.animalNotes = $scope.cat.animalNotes + "\r" + $scope.cat.animalOrigin;
-            $scope.initCat();
-        } else {
-            $scope.cat.age = jsonCat.age;
-            $scope.cat.weight = jsonCat.weight;
-            $scope.cat.source = jsonCat.source;
-            $scope.cat.whereAltered = jsonCat.whereAltered;
-            $scope.cat.declawed = jsonCat.declawed;
-            if ($scope.cat.animalDeclawed === "Yes" && !($scope.cat.declawed.front || $scope.cat.declawed.back)) {
-                // If animalDeclawed is set, make sure that at least one of declawed front or back is set.
-                $scope.cat.declawed.front = true;
-            }
-            if (!$scope.cat.declawed) {
-                // Just in case
-                $scope.cat.declawed = {front: false, back: false};
-            }
-            $scope.cat.felvTest = jsonCat.felvTest;
-            if (!$scope.cat.felvTest) {
-                $scope.cat.felvTest = {result: "", date: "", alerts: []};
-            }
-            if (!$scope.cat.felvTest.date) {
-                $scope.cat.felvTest.date = "";
-            }
-            $scope.cat.fivTest = jsonCat.fivTest;
-            if (!$scope.cat.fivTest) {
-                $scope.cat.fivTest = {result: "", date: "", alerts: []};
-            }
-            if (!$scope.cat.fivTest.date) {
-                $scope.cat.fivTest.date = "";
-            }
-            $scope.cat.vaccinations = jsonCat.vaccinations;
-            if ($scope.cat.vaccinations.length < 1) {
-                $scope.cat.vaccinations.push({name: "", date: "", alerts: []});
-            } else {
-                $scope.cat.vaccinations.forEach(function (vaccination) {
-                    vaccination.date = new Date(vaccination.date);
-                });
-            }
-        }
-    } else {
-        $scope.initCat();
-    }
+    decodeCatService.execute($scope.cat).then(function (decodedCat) {
+        // Replace only those fields that came from the decoded json
+        $scope.cat.version = decodedCat.version;
+        $scope.cat.age = decodedCat.age;
+        $scope.cat.weight = decodedCat.weight;
+        $scope.cat.source = decodedCat.source;
+        $scope.cat.whereAltered = decodedCat.whereAltered;
+        $scope.cat.declawed = decodedCat.declawed;
+        $scope.cat.felvTest = decodedCat.felvTest;
+        $scope.cat.fivTest = decodedCat.fivTest;
+        $scope.cat.vaccinations = decodedCat.vaccinations;
+    });
     // Do some transformations
     $scope.cat.animalReceivedDate = new Date($scope.cat.animalReceivedDate);
     $scope.cat.animalBirthdate = new Date($scope.cat.animalBirthdate);
-    $scope.cat.felvTest.date = new Date($scope.cat.felvTest.date);
-    $scope.cat.fivTest.date = new Date($scope.cat.fivTest.date);
     initAddEdit($scope, $log, $filter, $state, catServicesHolder, true);
 }
 function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
@@ -366,9 +306,10 @@ function loginController($state, $scope, growl, loginService, catState) {
     };
 }
 
-function listController($scope, $state, growl, catState, getAllCats, findCatByName, findCatByTypeahead) {
+function listController($scope, $state, growl, catState, getAllCats, findCatByName, findCatByTypeahead,
+                        decodeCatService) {
     $scope.sortColumn = 'animalName';
-    $scope.sortReverse  = false;
+    $scope.sortReverse = false;
     $scope.cats = [];
     $scope.showSpinner = true;
     $scope.status = catState.getState().status;
@@ -379,6 +320,18 @@ function listController($scope, $state, growl, catState, getAllCats, findCatByNa
         promise.then(function (ret) {
             angular.forEach(ret.data.data, function (cat, key) {
                 $scope.cats.push(cat);
+                decodeCatService.execute(cat).then(function (decodedCat) {
+                    // Replace only those fields that came from the decoded json
+                    cat.version = decodedCat.version;
+                    cat.age = decodedCat.age;
+                    cat.weight = decodedCat.weight;
+                    cat.source = decodedCat.source;
+                    cat.whereAltered = decodedCat.whereAltered;
+                    cat.declawed = decodedCat.declawed;
+                    cat.felvTest = decodedCat.felvTest;
+                    cat.fivTest = decodedCat.fivTest;
+                    cat.vaccinations = decodedCat.vaccinations;
+                });
             });
             $scope.showSpinner = false;
             if ($scope.cats.length < 1) {
