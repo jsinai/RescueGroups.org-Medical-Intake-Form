@@ -34,18 +34,7 @@ function editIntakeController($scope, $log, $filter, $state, catServicesHolder, 
     angular.forEach(catQueryResult.data.data, function (cat, key) {
         $scope.cat = cat;
     });
-    decodeCatService.execute($scope.cat).then(function (decodedCat) {
-        // Replace only those fields that came from the decoded json
-        $scope.cat.version = decodedCat.version;
-        $scope.cat.age = decodedCat.age;
-        $scope.cat.weight = decodedCat.weight;
-        $scope.cat.source = decodedCat.source;
-        $scope.cat.whereAltered = decodedCat.whereAltered;
-        $scope.cat.declawed = decodedCat.declawed;
-        $scope.cat.felvTest = decodedCat.felvTest;
-        $scope.cat.fivTest = decodedCat.fivTest;
-        $scope.cat.vaccinations = decodedCat.vaccinations;
-    });
+    decodeCatService.execute($scope.cat);
     // Do some transformations
     $scope.cat.animalReceivedDate = new Date($scope.cat.animalReceivedDate);
     $scope.cat.animalBirthdate = new Date($scope.cat.animalBirthdate);
@@ -320,18 +309,7 @@ function listController($scope, $state, growl, catState, getAllCats, findCatByNa
         promise.then(function (ret) {
             angular.forEach(ret.data.data, function (cat, key) {
                 $scope.cats.push(cat);
-                decodeCatService.execute(cat).then(function (decodedCat) {
-                    // Replace only those fields that came from the decoded json
-                    cat.version = decodedCat.version;
-                    cat.age = decodedCat.age;
-                    cat.weight = decodedCat.weight;
-                    cat.source = decodedCat.source;
-                    cat.whereAltered = decodedCat.whereAltered;
-                    cat.declawed = decodedCat.declawed;
-                    cat.felvTest = decodedCat.felvTest;
-                    cat.fivTest = decodedCat.fivTest;
-                    cat.vaccinations = decodedCat.vaccinations;
-                });
+                decodeCatService.execute(cat);
             });
             $scope.showSpinner = false;
             if ($scope.cats.length < 1) {
