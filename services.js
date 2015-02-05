@@ -518,6 +518,10 @@ catsApp.service('catState',
             state.token = ipCookie("rgToken");
             state.tokenHash = ipCookie("rgTokenHash");
         }
+        if (ipCookie("rgStatus")) {
+            // Don't know why this doesn't require JSON.parse
+            state.status = ipCookie("rgStatus");
+        }
         this.getState = function () {
             return state;
         };
@@ -526,6 +530,10 @@ catsApp.service('catState',
             ipCookie("rgTokenHash", tokenHash, { expires: 1 });
             state.token = token;
             state.tokenHash = tokenHash;
+        };
+        this.setStatus = function (status) {
+            ipCookie("rgStatus", JSON.stringify(status));
+            state.status = status;
         };
         this.logout = function () {
             ipCookie.remove("rgToken");

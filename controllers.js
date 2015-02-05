@@ -321,7 +321,7 @@ function listController($scope, $state, growl, catState, getAllCats, findCatByNa
         });
     };
     $scope.$watch('status', function () {
-        catState.getState().status = $scope.status;
+        catState.setStatus($scope.status);
         $scope.queryCats();
     }, true);
     $scope.catFilter = "";
