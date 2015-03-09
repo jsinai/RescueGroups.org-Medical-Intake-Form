@@ -13,6 +13,10 @@ function medicalIntakeController($scope, $log, $filter, $state, catServicesHolde
         animalMicrochipVendor: "",
         animalMicrochipNumber: "",
         animalNotes: "",
+        location: {
+            locationID: "",
+            locationName: ""
+        },
         // Items stored in our private, encoded field (origin notes)
         version: "1.0.0",
         age: "",
@@ -33,6 +37,10 @@ function editIntakeController($scope, $log, $filter, $state, catServicesHolder, 
     $scope.cat = {};
     angular.forEach(catQueryResult.data.data, function (cat, key) {
         $scope.cat = cat;
+        $scope.cat.location = {
+            locationID: cat.animalLocationID,
+            locationName: cat.locationName
+        };
     });
     decodeCatService.execute($scope.cat);
     // Do some transformations
@@ -110,27 +118,28 @@ function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
         $scope.isSaving = true;
         $scope.validateCat();
 
-        $log.info("Name: " + $scope.cat.animalName);
-        $log.info("Age: " + $scope.cat.age);
-        $log.info("DOB: " + $scope.cat.animalBirthdate);
-        $log.info("Gender: " + $scope.cat.animalSex);
-        $log.info("Weight: " + $scope.cat.weight);
-        $log.info("Color: " + $scope.cat.animalColor);
-        $log.info("Breed: " + $scope.cat.animalBreed);
-        $log.info("Coat Length: " + $scope.cat.animalCoatLength);
-        $log.info("Source: " + $scope.cat.source);
-        $log.info("Admitted: " + $scope.cat.animalReceivedDate);
-        $log.info("Altered: " + $scope.cat.animalAltered);
-        $log.info("Where Altered: " + $scope.cat.whereAltered);
-        $log.info("Microchip Vendor: " + $scope.cat.animalMicrochipVendor);
-        $log.info("Microchip ID: " + $scope.cat.animalMicrochipNumber);
-        $log.info("Declawed Front: " + $scope.cat.declawed);
+        $log.debug("Name: " + $scope.cat.animalName);
+        $log.debug("Age: " + $scope.cat.age);
+        $log.debug("DOB: " + $scope.cat.animalBirthdate);
+        $log.debug("Gender: " + $scope.cat.animalSex);
+        $log.debug("Weight: " + $scope.cat.weight);
+        $log.debug("Color: " + $scope.cat.animalColor);
+        $log.debug("Breed: " + $scope.cat.animalBreed);
+        $log.debug("Coat Length: " + $scope.cat.animalCoatLength);
+        $log.debug("Source: " + $scope.cat.source);
+        $log.debug("Admitted: " + $scope.cat.animalReceivedDate);
+        $log.debug("Altered: " + $scope.cat.animalAltered);
+        $log.debug("Where Altered: " + $scope.cat.whereAltered);
+        $log.debug("Microchip Vendor: " + $scope.cat.animalMicrochipVendor);
+        $log.debug("Microchip ID: " + $scope.cat.animalMicrochipNumber);
+        $log.debug("Declawed: " + $scope.cat.declawed);
+        $log.debug("Location: " + $scope.cat.locationName);
         $scope.cat.vaccinations.forEach(function (vaccination) {
-            $log.info(vaccination.name + ": " + vaccination.date);
+            $log.debug(vaccination.name + ": " + vaccination.date);
         });
-        $log.info("Notes: " + $scope.cat.animalNotes);
+        $log.debug("Notes: " + $scope.cat.animalNotes);
 
-        $log.info("Cat: " + JSON.stringify($scope.cat));
+        $log.debug("Cat: " + JSON.stringify($scope.cat));
 
         var promise = catServicesHolder.addEditCatService.addEditCat(catServicesHolder.catState.getState().token,
             catServicesHolder.catState.getState().tokenHash, $scope.cat, isEdit);
@@ -257,6 +266,12 @@ function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
             $scope.cat.animalStatus = defaultStatus.name;
             $scope.cat.animalStatusID = defaultStatus.id;
         }
+    });
+    $scope.locations = [];
+    catServicesHolder.getLocationsService.getData().then(function (ret) {
+        angular.forEach(ret.data.data, function (value, key) {
+            $scope.locations.push(value);
+        });
     });
     $scope.nameAlerts = [];
     $scope.isCatNameTaken = function () {

@@ -250,6 +250,19 @@
 </div>
 <div class="row">
     <fieldset>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label for="cat-location" class="control-label">Location</label> <select class="form-control" id="cat-location"
+                                                                                     ng-model="cat.location"
+                                                                                     ng-options="location.locationName for location in locations|orderBy:'locationName' track by location.locationID">
+                <option value="">-- choose one --</option>
+                </select>
+            </div>
+        </div>
+</fieldset>
+</div>
+<div class="row">
+    <fieldset>
         <legend>Vaccine History</legend>
     </fieldset>
 </div>

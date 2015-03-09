@@ -6,7 +6,7 @@ catsApp.constant('originNotesWarning', '== DO NOT EDIT THIS FIELD == ');
 
 catsApp.factory('catServicesHolder',
     function ($log, $filter, $location, catState, getCatNamesService, getBreedsService, getColorsService,
-              getMicrochipVendorsService, catUtils, addEditCatService, getStatusesService, growl) {
+              getMicrochipVendorsService, catUtils, addEditCatService, getStatusesService, getLocationsService, growl) {
         return {
             catState: catState,
             getCatNamesService: getCatNamesService,
@@ -16,6 +16,7 @@ catsApp.factory('catServicesHolder',
             catUtils: catUtils,
             addEditCatService: addEditCatService,
             getStatusesService: getStatusesService,
+            getLocationsService: getLocationsService,
             growl: growl
         };
     });
@@ -43,6 +44,7 @@ catsApp.service('addEditCatService',
             var encodedCat = originNotesWarning + joinedCat;
             var description = isEdit ?
                 cat.animalDescriptionPlain :
+                // Auto-generate a description
                 cat.animalName + " (DOB " + catUtils.getFormattedDate(cat.animalBirthdate) + ") is a " +
                 cat.animalBreed;
             var postData = {
@@ -66,7 +68,8 @@ catsApp.service('addEditCatService',
                         "animalSex": cat.animalSex,
                         "animalDeclawed": (cat.declawed.front || cat.declawed.back) ? "Yes" : "No",
                         "animalSpeciesID": "Cat",
-                        "animalStatusID": cat.animalStatusID
+                        "animalStatusID": cat.animalStatusID,
+                        "animalLocationID": cat.location.locationID
                     }
                 ]};
             if (isEdit) {
@@ -107,7 +110,8 @@ catsApp.service('getAllCats',
                         "animalPictures",
                         "animalSex",
                         "animalStatus",
-                        "locationName"
+                        "locationName",
+                        "animalLocationID"
                     ],
                     "filters": [
                         {
@@ -178,7 +182,8 @@ catsApp.service('getOneCat',
                         "animalSpecies",
                         "animalStatus",
                         "animalStatusID",
-                        "locationName"
+                        "locationName",
+                        "animalLocationID"
                     ],
                     "filters": [
                         {
@@ -225,7 +230,8 @@ catsApp.service('findCatByName',
                         "animalPictures",
                         "animalSex",
                         "animalStatus",
-                        "locationName"
+                        "locationName",
+                        "animalLocationID"
                     ],
                     "filters": [
                         {
@@ -442,6 +448,35 @@ catsApp.service('getStatusesService',
                     "calcFoundRows": "Yes",
                     "resultStart": 0,
                     "resultLimit": 100
+                }
+            };
+            return $http({
+                method: 'POST',
+                url: rgApi,
+                data: postData
+            })
+        }
+    }
+);
+catsApp.service('getLocationsService',
+    function ($http, rgApi, catState) {
+        this.getData = function () {
+            var postData =
+            {
+                "token": catState.getState().token,
+                "tokenHash": catState.getState().tokenHash,
+                "objectType": "locations",
+                "objectAction": "search",
+                "search": {
+                    "calcFoundRows": "Yes",
+                    "resultStart": 0,
+                    "resultLimit": 500,
+                    "fields": [
+                        "locationID",
+                        "locationName"
+                    ],
+                    "filters": [
+                    ]
                 }
             };
             return $http({
