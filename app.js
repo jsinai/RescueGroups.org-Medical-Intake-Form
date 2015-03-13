@@ -9,7 +9,7 @@ catsApp.config(function ($stateProvider) {
             controller: listController,
             templateUrl: 'list.html',
             data: {
-                authenticate: true
+                authenticate: false
             }
         }).
         state('filteredList', {
@@ -50,6 +50,20 @@ catsApp.config(function ($stateProvider) {
                 }
             }
         }).
+        state('showCat', {
+            url: "/bio/:catId",
+            controller: bioController,
+            templateUrl: 'bio.html',
+            data: {
+                authenticate: false
+            },
+            resolve: {
+                catQueryResult: function (getOneCatToShow, $stateParams) {
+                    var id = $stateParams.catId;
+                    return getOneCatToShow.getData(id);
+                }
+            }
+        }).
         state('login', {
             url: "/login",
             controller: loginController,
@@ -77,7 +91,7 @@ catsApp.config(function ($stateProvider) {
             function (event, toState, toParams, fromState, fromParams) {
                 // TODO: replace with real role/privs like passport
                 if (toState.data.authenticate &&
-                    (!catState.getState().token || !catState.getState().tokenHash)) {
+                    (!catState.isLoggedIn())) {
                     event.preventDefault();
                     $state.go("login");
                 }

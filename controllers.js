@@ -393,18 +393,24 @@ function listController($scope, $state, growl, catState, getAllCats, findCatByNa
                 return;
             }
             angular.forEach(result, function (value, key) {
-                $state.go("editCat", {catId: key});
+                    $state.go("editCat", {catId: key});
             });
         });
         promise.error(function (msg) {
             growl.addErrorMessage(msg || "Error encountered retrieving cat by name");
         });
     };
-    $scope.loggedIn = catState.getState().token || catState.getState().tokenHash;
+    $scope.loggedIn = catState.isLoggedIn();
 }
-function findCatController($scope, $state, growl, catState, getAllCats, findCatByName) {
+function findCatController($scope, catState) {
     $scope.cats = [];
     angular.forEach(catState.getState().foundCats, function (cat, key) {
         $scope.cats.push(cat);
+    });
+}
+function bioController($scope, catQueryResult) {
+
+    angular.forEach(catQueryResult.data.data, function (cat, key) {
+        $scope.cat = cat;
     });
 }

@@ -90,10 +90,7 @@ catsApp.service('getAllCats',
         this.getData = function (status) {
             var postData =
             {
-                "token": catState.getState().token,
-                "tokenHash": catState.getState().tokenHash,
                 "objectType": "animals",
-                "objectAction": "search",
                 "search": {
                     "calcFoundRows": "Yes",
                     "resultStart": 0,
@@ -101,17 +98,14 @@ catsApp.service('getAllCats',
                     "resultSort": "animalName",
                     "resultOrder": "asc",
                     "fields": [
-                        "animalID",
                         "animalBreed",
                         "animalColor",
-                        "animalMicrochipNumber",
+                        "animalID",
                         "animalName",
-                        "animalOrigin",
                         "animalPictures",
                         "animalSex",
                         "animalStatus",
-                        "locationName",
-                        "animalLocationID"
+                        "locationName"
                     ],
                     "filters": [
                         {
@@ -122,20 +116,36 @@ catsApp.service('getAllCats',
                     ]
                 }
             };
-            var orCriteria = [];
-            angular.forEach(status, function (value, key) {
-                if (value.selected) {
-                    postData.search.filters.push(
-                        {
-                            "fieldName": "animalStatus",
-                            "operation": "equals",
-                            "criteria": value.rgStr
-                        }
-                    );
-                    orCriteria.push((orCriteria.length + 2).toString());
-                }
-            });
-            postData.search.filterProcessing = "1 and (" + orCriteria.join(" or ") + ")";
+            if (catState.isLoggedIn()) {
+                postData.token = catState.getState().token;
+                postData.tokenHash = catState.getState().tokenHash;
+                postData.objectAction = "search";
+                postData.search.fields.push("animalLocationID");
+                postData.search.fields.push("animalMicrochipNumber");
+                postData.search.fields.push("animalOrigin");
+            } else {
+                postData.apikey = "JrxyBdcw";
+                postData.objectAction = "publicSearch";
+            }
+            if (catState.isLoggedIn()) {
+                // Loop through all the checkboxes for status (Available, Hold, etc) and add them if checked.
+                // This only applies if the user logged in. Otherwise we only display Available cats.
+                var orCriteria = [];
+                angular.forEach(status, function (value, key) {
+                    if (value.selected) {
+                        postData.search.filters.push(
+                            {
+                                "fieldName": "animalStatus",
+                                "operation": "equals",
+                                "criteria": value.rgStr
+                            }
+                        );
+                        // The OR criteria are 1-based. The first one is always animalOrgID=910, so we start with index=2.
+                        orCriteria.push((orCriteria.length + 2).toString());
+                    }
+                });
+                postData.search.filterProcessing = "1 and (" + orCriteria.join(" or ") + ")";
+            }
             return $http({
                 method: 'POST',
                 url: rgApi,
@@ -184,6 +194,55 @@ catsApp.service('getOneCat',
                         "animalStatusID",
                         "locationName",
                         "animalLocationID"
+                    ],
+                    "filters": [
+                        {
+                            "fieldName": "animalID",
+                            "operation": "equals",
+                            "criteria": catId
+                        },
+                        {
+                            "fieldName": "animalOrgID",
+                            "operation": "equals",
+                            "criteria": "910"
+                        }
+                    ]
+                }
+            };
+            return $http({
+                method: 'POST',
+                url: rgApi,
+                data: postData
+            })
+        }
+    }
+);
+catsApp.service('getOneCatToShow',
+    function ($http, rgApi) {
+        this.getData = function (catId) {
+            var postData =
+            {
+                "apikey": "JrxyBdcw",
+                "objectType": "animals",
+                "objectAction": "publicSearch",
+                "search": {
+                    "calcFoundRows": "Yes",
+                    "resultStart": 0,
+                    "resultLimit": 1,
+                    "fields": [
+                        "animalID",
+                        "animalName",
+                        "animalSpecies",
+                        "animalBreed",
+                        "animalGeneralAge",
+                        "animalSex",
+                        "locationName",
+                        "animalColor",
+                        "animalPattern",
+                        "animalCoatLength",
+                        "animalDescriptionPlain",
+                        "animalSpecialneeds",
+                        "animalPictures"
                     ],
                     "filters": [
                         {
@@ -576,6 +635,9 @@ catsApp.service('catState',
             state.token = "";
             state.tokenHash = "";
         };
+        this.isLoggedIn = function () {
+            return state.token && state.tokenHash;
+        }
     }
 );
 catsApp.service('decodeCatService',

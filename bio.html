@@ -1,0 +1,61 @@
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span
+                    class="icon-bar"></span> <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://www.ninelivesfoundation.org/">Nine Lives Foundation</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a ui-sref="list">Cats</a></li>
+                <li><a ui-sref="login">Log In</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <h2>{{cat.animalName}}</h2>
+    <img ng-src="{{cat.animalPictures[0].urlInsecureFullsize}}"
+         style="max-width:640x; max-height:480px; margin-bottom: 20px" class="img-rounded">
+    <table class="table">
+
+        <tr>
+            <td>Notes</td>
+            <td>{{cat.animalDescriptionPlain}}</td>
+        </tr>
+        <tr>
+            <td>Breed</td>
+            <td>{{cat.animalBreed}}</td>
+        </tr>
+        <tr>
+            <td>Color</td>
+            <td>{{cat.animalColor}}</td>
+        </tr>
+        <tr>
+            <td>Gender</td>
+            <td>{{cat.animalSex}}</td>
+        </tr>
+        <tr>
+            <td>Age</td>
+            <td>{{cat.animalGeneralAge}}</td>
+        </tr>
+        <tr>
+            <td>Room</td>
+            <td>{{cat.locationName}}</td>
+        </tr>
+        <tr>
+            <td>Has special needs</td>
+            <td>{{cat.animalSpecialneeds}}</td>
+        </tr>
+    </table>
+    <a href="#/" class="btn btn-default">Back</a>
+
+</div>
