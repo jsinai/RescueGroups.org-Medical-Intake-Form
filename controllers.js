@@ -408,9 +408,11 @@ function findCatController($scope, catState) {
         $scope.cats.push(cat);
     });
 }
-function bioController($scope, catQueryResult) {
+function bioController($scope, $sce, catQueryResult) {
 
     angular.forEach(catQueryResult.data.data, function (cat, key) {
         $scope.cat = cat;
+        $scope.animalDescriptionSafe =
+            $sce.trustAsHtml(cat.animalDescriptionPlain);
     });
 }

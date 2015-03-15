@@ -32,3 +32,8 @@ div.loading {
 .growl {
     top: 60px;
 }
+
+/* Adjust navbar for NL logo */
+.navbar-brand {
+    padding: 2px 15px;
+}

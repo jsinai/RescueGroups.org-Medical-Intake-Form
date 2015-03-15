@@ -620,6 +620,7 @@ catsApp.service('catState',
             return state;
         };
         this.setState = function (token, tokenHash) {
+            // Tokens expire in 1 day.
             ipCookie("rgToken", token, { expires: 1 });
             ipCookie("rgTokenHash", tokenHash, { expires: 1 });
             state.token = token;

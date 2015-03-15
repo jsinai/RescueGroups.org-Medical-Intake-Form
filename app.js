@@ -74,8 +74,10 @@ catsApp.config(function ($stateProvider) {
         }).
         state('logout', {
             url: "/logout",
-            controller: function(catState) {
+            controller: function($state, catState) {
                catState.logout();
+                // Immediately redirect to the list page. So we don't ever display the logout page.
+                $state.go("list");
             },
             templateUrl: 'logout.html',
             data: {

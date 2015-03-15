@@ -7,14 +7,17 @@
                 <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span
                     class="icon-bar"></span> <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="http://www.ninelivesfoundation.org/">Nine Lives Foundation</a>
+            <a class="navbar-brand" href="http://www.ninelivesfoundation.org/">
+                <img src="nl-logo-sm.png" alt="Nine Lives Foundation">
+            </a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li><a ui-sref="list">Cats</a></li>
-                <li><a ui-sref="login">Log In</a></li>
+                <li><a ui-sref="login" ng-hide="loggedIn" tooltip-html-unsafe="Log in for more features"
+                       tooltip-trigger="mouseenter" tooltip-placement="bottom">Log In</a></li>
             </ul>
         </div>
     </div>
@@ -22,14 +25,33 @@
 
 <div class="container">
 
-    <h2>{{cat.animalName}}</h2>
-    <img ng-src="{{cat.animalPictures[0].urlInsecureFullsize}}"
-         style="max-width:640x; max-height:480px; margin-bottom: 20px" class="img-rounded">
+    <div class="jumbotron">
+        <table>
+            <tr>
+                <td>
+                    <img ng-src="{{cat.animalPictures[0].urlInsecureFullsize}}"
+                         style="max-width:640px; max-height:480px; margin-bottom: 20px" class="img-rounded">
+                </td>
+                <td>
+                    <table>
+                        <tr>
+                            <td>
+                                <img style="padding-left: 30px;" src="nl-logo.png">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><h1 style="padding-left: 30px;">{{cat.animalName}}</h1></td>
+                        </tr>
+                    </table>
+            </tr>
+        </table>
+
+    </div>
     <table class="table">
 
         <tr>
             <td>Notes</td>
-            <td>{{cat.animalDescriptionPlain}}</td>
+            <td><span ng-bind-html="animalDescriptionSafe"></span></td>
         </tr>
         <tr>
             <td>Breed</td>
