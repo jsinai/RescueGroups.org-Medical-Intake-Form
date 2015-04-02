@@ -6,7 +6,8 @@ catsApp.constant('originNotesWarning', '== DO NOT EDIT THIS FIELD == ');
 
 catsApp.factory('catServicesHolder',
     function ($log, $filter, $location, catState, getCatNamesService, getBreedsService, getColorsService,
-              getMicrochipVendorsService, catUtils, addEditCatService, getStatusesService, getLocationsService, growl) {
+              getMicrochipVendorsService, catUtils, addEditCatService, getStatusesService, getLocationsService, growl
+              ) {
         return {
             catState: catState,
             getCatNamesService: getCatNamesService,
@@ -45,8 +46,8 @@ catsApp.service('addEditCatService',
             var description = isEdit ?
                 cat.animalDescriptionPlain :
                 // Auto-generate a description
-                cat.animalName + " (DOB " + catUtils.getFormattedDate(cat.animalBirthdate) + ") is a " +
-                cat.animalBreed;
+            cat.animalName + " (DOB " + catUtils.getFormattedDate(cat.animalBirthdate) + ") is a " +
+            cat.animalBreed;
             var postData = {
                 "token": token,
                 "tokenHash": tokenHash,
@@ -71,7 +72,8 @@ catsApp.service('addEditCatService',
                         "animalStatusID": cat.animalStatusID,
                         "animalLocationID": cat.location.locationID
                     }
-                ]};
+                ]
+            };
             if (isEdit) {
                 postData.objectAction = "edit";
                 postData.values[0].animalID = cat.animalID;
@@ -185,6 +187,7 @@ catsApp.service('getOneCat',
                         "animalNotes",
                         "animalOrigin",
                         "animalPattern",
+                        "animalPictures",
                         "animalPrimaryBreedID",
                         "animalReceivedDate",
                         "animalSex",
@@ -534,8 +537,7 @@ catsApp.service('getLocationsService',
                         "locationID",
                         "locationName"
                     ],
-                    "filters": [
-                    ]
+                    "filters": []
                 }
             };
             return $http({
@@ -621,8 +623,8 @@ catsApp.service('catState',
         };
         this.setState = function (token, tokenHash) {
             // Tokens expire in 1 day.
-            ipCookie("rgToken", token, { expires: 1 });
-            ipCookie("rgTokenHash", tokenHash, { expires: 1 });
+            ipCookie("rgToken", token, {expires: 1});
+            ipCookie("rgTokenHash", tokenHash, {expires: 1});
             state.token = token;
             state.tokenHash = tokenHash;
         };

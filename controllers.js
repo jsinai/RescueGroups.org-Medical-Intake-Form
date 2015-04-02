@@ -1,6 +1,6 @@
 'use strict';
 
-function medicalIntakeController($scope, $log, $filter, $state, catServicesHolder) {
+function medicalIntakeController($scope, $log, $filter, $state, $http, rgApi, catServicesHolder) {
     $scope.cat = {
         // Items stored in rescuegroups fields
         animalAltered: false,
@@ -31,9 +31,10 @@ function medicalIntakeController($scope, $log, $filter, $state, catServicesHolde
             {name: "", date: "", alerts: []}
         ]
     };
-    initAddEdit($scope, $log, $filter, $state, catServicesHolder, false);
+    initAddEdit($scope, $log, $filter, $state, $http, rgApi, catServicesHolder, false);
 }
-function editIntakeController($scope, $log, $filter, $state, catServicesHolder, catQueryResult, decodeCatService) {
+function editIntakeController($scope, $log, $filter, $state, $http, rgApi, catServicesHolder, catQueryResult,
+                              decodeCatService) {
     $scope.cat = {};
     angular.forEach(catQueryResult.data.data, function (cat, key) {
         $scope.cat = cat;
@@ -46,9 +47,9 @@ function editIntakeController($scope, $log, $filter, $state, catServicesHolder, 
     // Do some transformations
     $scope.cat.animalReceivedDate = new Date($scope.cat.animalReceivedDate);
     $scope.cat.animalBirthdate = new Date($scope.cat.animalBirthdate);
-    initAddEdit($scope, $log, $filter, $state, catServicesHolder, true);
+    initAddEdit($scope, $log, $filter, $state, $http, rgApi, catServicesHolder, true);
 }
-function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
+function initAddEdit($scope, $log, $filter, $state, $http, rgApi, catServicesHolder, isEdit) {
     $scope.dobAlerts = [];
     $scope.admittedAlerts = [];
     $scope.isSaving = false;
@@ -73,7 +74,10 @@ function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
             'Intake Date cannot be earlier than Estimated Date of Birth');
         if ($scope.cat.animalReceivedDate < $scope.cat.animalBirthdate) {
             if (dobLaterThanIntakeAlerts.length < 1) {
-                $scope.admittedAlerts.push({type: 'danger', msg: 'Intake Date cannot be earlier than Estimated Date of Birth'});
+                $scope.admittedAlerts.push({
+                    type: 'danger',
+                    msg: 'Intake Date cannot be earlier than Estimated Date of Birth'
+                });
             }
         } else {
             if (dobLaterThanIntakeAlerts.length > 0) {
@@ -154,16 +158,16 @@ function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
              */
             var success =
                 (ret.status == 200 &&
-                    ret.statusText == "OK" &&
-                    ret.data.status == "ok" &&
-                    ret.data.messages.recordMessages[0].status == "ok");
+                ret.statusText == "OK" &&
+                ret.data.status == "ok" &&
+                ret.data.messages.recordMessages[0].status == "ok");
             if (success) {
                 catServicesHolder.growl.addSuccessMessage("Successfully " + (isEdit ? "Edited" : "Added") + " " +
-                    $scope.cat.animalName, {ttl: 5000});
+                $scope.cat.animalName, {ttl: 5000});
                 $state.go(nextState);
             } else {
                 catServicesHolder.growl.addErrorMessage("Error encountered: " +
-                    JSON.stringify(ret.data.messages.recordMessages, null, " "));
+                JSON.stringify(ret.data.messages.recordMessages, null, " "));
             }
             $scope.isSaving = false;
         });
@@ -289,7 +293,67 @@ function initAddEdit($scope, $log, $filter, $state, catServicesHolder, isEdit) {
                 $scope.nameAlerts.splice(0, 1);
             }
         }
+    };
+    //http://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string
+    function arrayBufferToBase64(buffer) {
+        var binary = '';
+        var bytes = new Uint8Array(buffer);
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary);
     }
+
+    $scope.upload = function (files) {
+        if ($scope.intakeForm.$dirty) {
+            if (!confirm("Please save your Cat information before uploading a picture. If you want to upload a picture anyway, click OK")) {
+                event.preventDefault();
+                return;
+            }
+        }
+        if (!$scope.files || $scope.files.length < 1) {
+            catServicesHolder.growl.addErrorMessage("No picture selected");
+            return;
+        }
+        $scope.isUploading = true;
+        angular.forEach($scope.files, function (file) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var fileContent = arrayBufferToBase64(reader.result);
+                var postData =
+                {
+                    "token": catServicesHolder.catState.getState().token,
+                    "tokenHash": catServicesHolder.catState.getState().tokenHash,
+                    "objectType": "animals",
+                    "objectAction": "addPicture",
+                    "values": [
+                        {
+                            "animalID": $scope.cat.animalID,
+                            "fileName": file.name,
+                            "pictureBinary": fileContent,
+                            "mediaOrder": 1
+                        }
+                    ]
+                };
+                $http({
+                    method: 'POST',
+                    url: rgApi,
+                    data: postData
+                })
+                    .success(function (data) {
+                        catServicesHolder.growl.addSuccessMessage("Successfully added picture", {ttl: 5000});
+                        $scope.isUploading = false;
+                        $state.go("list");
+                    })
+                    .error(function (err) {
+                        catServicesHolder.growl.addErrorMessage(msg || "Error adding picture");
+                        $scope.isUploading = false;
+                    })
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    };
 }
 function loginController($state, $scope, growl, loginService, catState) {
 
@@ -393,7 +457,7 @@ function listController($scope, $state, growl, catState, getAllCats, findCatByNa
                 return;
             }
             angular.forEach(result, function (value, key) {
-                    $state.go("editCat", {catId: key});
+                $state.go("editCat", {catId: key});
             });
         });
         promise.error(function (msg) {
