@@ -70,7 +70,9 @@ catsApp.service('addEditCatService',
                         "animalDeclawed": (cat.declawed.front || cat.declawed.back) ? "Yes" : "No",
                         "animalSpeciesID": "Cat",
                         "animalStatusID": cat.animalStatusID,
-                        "animalLocationID": cat.location.locationID
+                        "animalLocationID": cat.location.locationID,
+                        "animalHousetrained":cat.animalHousetrained,
+                        "animalOKWithCats":cat.animalOKWithCats
                     }
                 ]
             };
@@ -196,7 +198,9 @@ catsApp.service('getOneCat',
                         "animalStatus",
                         "animalStatusID",
                         "locationName",
-                        "animalLocationID"
+                        "animalLocationID",
+                        "animalHousetrained",
+                        "animalOKWithCats"
                     ],
                     "filters": [
                         {

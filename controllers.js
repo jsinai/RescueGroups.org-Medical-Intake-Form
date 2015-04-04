@@ -31,7 +31,8 @@ function medicalIntakeController($scope, $log, $filter, $state, $http, rgApi, ca
             {name: "", date: "", alerts: []}
         ]
     };
-    initAddEdit($scope, $log, $filter, $state, $http, rgApi, catServicesHolder, false);
+    $scope.isEdit = false;
+    initAddEdit($scope, $log, $filter, $state, $http, rgApi, catServicesHolder);
 }
 function editIntakeController($scope, $log, $filter, $state, $http, rgApi, catServicesHolder, catQueryResult,
                               decodeCatService) {
@@ -47,9 +48,10 @@ function editIntakeController($scope, $log, $filter, $state, $http, rgApi, catSe
     // Do some transformations
     $scope.cat.animalReceivedDate = new Date($scope.cat.animalReceivedDate);
     $scope.cat.animalBirthdate = new Date($scope.cat.animalBirthdate);
-    initAddEdit($scope, $log, $filter, $state, $http, rgApi, catServicesHolder, true);
+    $scope.isEdit = true;
+    initAddEdit($scope, $log, $filter, $state, $http, rgApi, catServicesHolder);
 }
-function initAddEdit($scope, $log, $filter, $state, $http, rgApi, catServicesHolder, isEdit) {
+function initAddEdit($scope, $log, $filter, $state, $http, rgApi, catServicesHolder) {
     $scope.dobAlerts = [];
     $scope.admittedAlerts = [];
     $scope.isSaving = false;
@@ -146,7 +148,7 @@ function initAddEdit($scope, $log, $filter, $state, $http, rgApi, catServicesHol
         $log.debug("Cat: " + JSON.stringify($scope.cat));
 
         var promise = catServicesHolder.addEditCatService.addEditCat(catServicesHolder.catState.getState().token,
-            catServicesHolder.catState.getState().tokenHash, $scope.cat, isEdit);
+            catServicesHolder.catState.getState().tokenHash, $scope.cat, $scope.isEdit);
         promise.then(function (ret) {
             /*
              ret.status==200
@@ -162,7 +164,7 @@ function initAddEdit($scope, $log, $filter, $state, $http, rgApi, catServicesHol
                 ret.data.status == "ok" &&
                 ret.data.messages.recordMessages[0].status == "ok");
             if (success) {
-                catServicesHolder.growl.addSuccessMessage("Successfully " + (isEdit ? "Edited" : "Added") + " " +
+                catServicesHolder.growl.addSuccessMessage("Successfully " + ($scope.isEdit ? "Edited" : "Added") + " " +
                 $scope.cat.animalName, {ttl: 5000});
                 $state.go(nextState);
             } else {
@@ -172,7 +174,7 @@ function initAddEdit($scope, $log, $filter, $state, $http, rgApi, catServicesHol
             $scope.isSaving = false;
         });
         promise.error(function (msg) {
-            catServicesHolder.growl.addErrorMessage(msg || "Error " + (isEdit ? "Editing" : "Adding") + " cat");
+            catServicesHolder.growl.addErrorMessage(msg || "Error " + ($scope.isEdit ? "Editing" : "Adding") + " cat");
             $scope.isSaving = false;
         });
     };
@@ -358,6 +360,7 @@ function initAddEdit($scope, $log, $filter, $state, $http, rgApi, catServicesHol
 function loginController($state, $scope, growl, loginService, catState) {
 
     $scope.doLogin = function () {
+        $scope.isLoggingIn = true;
         var promise = loginService.login($scope.username, $scope.password, "910");
         promise.then(function (ret) {
             if (ret.data.status == "error") {
@@ -367,9 +370,11 @@ function loginController($state, $scope, growl, loginService, catState) {
                 catState.setState(ret.data.data.token, ret.data.data.tokenHash);
                 $state.go("list");
             }
+            $scope.isLoggingIn = false;
         });
         promise.error(function (msg) {
             growl.addErrorMessage(msg || "Error logging in");
+            $scope.isLoggingIn = false;
         });
     };
 }

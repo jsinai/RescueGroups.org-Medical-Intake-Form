@@ -2,7 +2,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Nine Lives Medical Record</title>
+    <title>Nine Lives Cat Record</title>
 </head>
 <body>
 <nav class="navbar navbar-inverse" role="navigation">
@@ -36,7 +36,8 @@
                 <td>
                     <img src="nl-logo.png">
                 </td>
-                <td><h1 style="padding-left: 30px;">Medical Record</h1></td>
+                <td><h1 style="padding-left: 30px;">{{(isEdit ? "Edit" : "New") + " " + (isEdit ? cat.animalName :
+                                                    "Cat")}}</h1></td>
             </tr>
         </table>
 
@@ -255,6 +256,36 @@
                             </select>
                         </div>
                     </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Home with Cats</label>
+
+                            <div class="btn-group form-control"
+                                 style="padding: 0;border: none;box-shadow: none;-webkit-box-shadow:none;-moz-box-shadow: none;">
+                                <label class="btn btn-primary" ng-model="cat.animalOKWithCats"
+                                       btn-radio="'Yes'">Yes</label> <label class="btn btn-primary"
+                                                                            ng-model="cat.animalOKWithCats"
+                                                                            btn-radio="'No'">No</label> <label
+                                    class="btn btn-primary" ng-model="cat.animalOKWithCats"
+                                    btn-radio="''">Unknown</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Housetrained</label>
+
+                            <div class="btn-group form-control"
+                                 style="padding: 0;border: none;box-shadow: none;-webkit-box-shadow:none;-moz-box-shadow: none;">
+                                <label class="btn btn-primary" ng-model="cat.animalHousetrained"
+                                       btn-radio="'Yes'">Yes</label> <label class="btn btn-primary"
+                                                                            ng-model="cat.animalHousetrained"
+                                                                            btn-radio="'No'">No</label> <label
+                                    class="btn btn-primary" ng-model="cat.animalHousetrained"
+                                    btn-radio="''">Unknown</label>
+                            </div>
+                        </div>
+                    </div>
                 </fieldset>
             </div>
             <div class="row">
@@ -301,10 +332,10 @@
                 </fieldset>
             </div>
             <a ui-sref="list" type="submit" class="btn btn-default">Cancel</a>
-            <button class="btn btn-default btn-primary" ng-click="saveCat(intakeForm.$valid, 'list')"
+            <button class="btn btn-default btn-primary" js-spinner="isSaving" ng-click="saveCat(intakeForm.$valid, 'list')"
                     ng-disabled="isSaving">Save
             </button>
-            <button class="btn btn-default btn-primary" ng-click="saveCat(intakeForm.$valid, 'addCat')"
+            <button class="btn btn-default btn-primary" js-spinner="isSaving" ng-click="saveCat(intakeForm.$valid, 'addCat')"
                     ng-disabled="isSaving">Save and Add Another
             </button>
         </div>
@@ -335,13 +366,12 @@
                     </div>
                 </div>
                 <div class="col-sm-6">
-                    <button ng-disabled="isUploading" class="btn btn-primary" ng-click="upload()">Upload</button>
+                    <button ng-disabled="isUploading" class="btn btn-primary" ng-click="upload()" js-spinner="isUploading">Upload</button>
                 </div>
             </div>
         </div>
     </form>
     <div style="float: right;margin-bottom: 20px">Version 1.0</div>
 </div>
-
 </body>
 </html>

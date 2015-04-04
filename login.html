@@ -38,7 +38,7 @@
                    required>
         </div>
         <a href="#/" class="btn btn-default">Cancel</a>
-        <button ng-click="doLogin()" class="btn btn-default btn-primary">Log In
+        <button ng-click="doLogin()" class="btn btn-default btn-primary" ng-disabled="isLoggingIn" js-spinner="isLoggingIn">Log In
         </button>
     </form>
 

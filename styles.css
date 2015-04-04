@@ -37,10 +37,12 @@ div.loading {
 .navbar-brand {
     padding: 2px 15px;
 }
+
 .btn-file {
     position: relative;
     overflow: hidden;
 }
+
 .btn-file input[type=file] {
     position: absolute;
     top: 0;
@@ -55,7 +57,9 @@ div.loading {
     cursor: inherit;
     display: block;
 }
+
 input[readonly] {
     background-color: white !important;
     cursor: text !important;
 }
+
