@@ -242,6 +242,7 @@ catsApp.service('getOneCatToShow',
                         "animalSpecies",
                         "animalBreed",
                         "animalGeneralAge",
+                        "animalBirthdate",
                         "animalSex",
                         "locationName",
                         "animalColor",
@@ -249,7 +250,9 @@ catsApp.service('getOneCatToShow',
                         "animalCoatLength",
                         "animalDescriptionPlain",
                         "animalSpecialneeds",
-                        "animalPictures"
+                        "animalPictures",
+                        "animalHousetrained",
+                        "animalOKWithCats"
                     ],
                     "filters": [
                         {

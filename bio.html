@@ -26,26 +26,9 @@
 <div class="container">
 
     <div class="jumbotron">
-        <table>
-            <tr>
-                <td>
-                    <img ng-src="{{cat.animalPictures[0].urlInsecureFullsize}}"
-                         style="max-width:640px; max-height:480px; margin-bottom: 20px" class="img-rounded">
-                </td>
-                <td>
-                    <table>
-                        <tr>
-                            <td>
-                                <img style="padding-left: 30px;" src="nl-logo.png">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><h1 style="padding-left: 30px;">{{cat.animalName}}</h1></td>
-                        </tr>
-                    </table>
-            </tr>
-        </table>
-
+        <img src="nl-logo.png" alt="Nine Lives Foundation">
+        <h1>{{cat.animalName}}</h1>
+        <img style="max-width:100%" class="img-rounded" ng-src="{{cat.animalPictures[0].urlInsecureFullsize}}">
     </div>
     <table class="table">
 
@@ -70,14 +53,26 @@
             <td>{{cat.animalGeneralAge}}</td>
         </tr>
         <tr>
+            <td>Date of Birth</td>
+            <td>{{cat.animalBirthdate||'--'}}</td>
+        </tr>
+        <tr>
             <td>Room</td>
-            <td>{{cat.locationName}}</td>
+            <td>{{cat.locationName||'--'}}</td>
         </tr>
         <tr>
             <td>Has special needs</td>
             <td>{{cat.animalSpecialneeds}}</td>
         </tr>
+        <tr>
+            <td>OK with Other Cats</td>
+            <td>{{cat.animalOKWithCats||'--'}}</td>
+        </tr>
+        <tr>
+            <td>Housetrained</td>
+            <td>{{cat.animalHousetrained||'--'}}</td>
+        </tr>
     </table>
-    <a href="#/" class="btn btn-default">Back</a>
+    <a href="#/" class="btn btn-default" style="margin-bottom: 20px">Back</a>
 
 </div>
