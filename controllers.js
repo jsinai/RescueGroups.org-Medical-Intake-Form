@@ -386,11 +386,12 @@ function listController($scope, $state, growl, catState, getAllCats, findCatByNa
     $scope.cats = [];
     $scope.showSpinner = true;
     $scope.status = catState.getState().status;
+    $scope.request = null;
     $scope.queryCats = function () {
         $scope.cats = [];
         $scope.showSpinner = true;
-        var promise = getAllCats.getData($scope.status);
-        promise.then(function (ret) {
+        $scope.request = getAllCats.getData($scope.status);
+        $scope.request.promise.then(function (ret) {
             angular.forEach(ret.data.data, function (cat, key) {
                 $scope.cats.push(cat);
                 decodeCatService.execute(cat);
@@ -400,11 +401,17 @@ function listController($scope, $state, growl, catState, getAllCats, findCatByNa
                 growl.addInfoMessage("No results returned")
             }
         });
-        promise.error(function (msg) {
-            growl.addErrorMessage(msg || "Error retrieving cats");
+        $scope.request.promise.error(function (msg) {
+            if (msg) {
+                growl.addErrorMessage(msg);
+            }
         });
     };
     $scope.$watch('status', function () {
+        if ($scope.request) {
+            $scope.request.cancel("User cancelled by clicking another radio");
+            $scope.cats = [];
+        }
         catState.setStatus($scope.status);
         $scope.queryCats();
     }, true);

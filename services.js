@@ -90,7 +90,7 @@ catsApp.service('addEditCatService',
         }
     });
 catsApp.service('getAllCats',
-    function ($http, rgApi, catState) {
+    function ($http, $q, rgApi, catState) {
         this.getData = function (status) {
             var postData =
             {
@@ -150,11 +150,21 @@ catsApp.service('getAllCats',
                 });
                 postData.search.filterProcessing = "1 and (" + orCriteria.join(" or ") + ")";
             }
-            return $http({
+            // See http://odetocode.com/blogs/scott/archive/2014/04/24/canceling-http-requests-in-angularjs.aspx
+            var canceller = $q.defer();
+            var cancel = function(reason){
+                canceller.resolve(reason);
+            };
+            var promise = $http({
                 method: 'POST',
                 url: rgApi,
-                data: postData
-            })
+                data: postData,
+                timeout: canceller.promise
+            });
+            return {
+                promise: promise,
+                cancel: cancel
+            };
         }
     }
 );
