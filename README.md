@@ -1,6 +1,8 @@
 RescueGroups.org Medical Intake Form
 ====================================
 
+URL: http://<host>:<port>/medical-intake/#/
+
 Created for Nine Lives Foundation. Captures intake information convenient for our veterinarian.
 
 This project was an excellent application of AngularJS and supporting technologies. It illustrates the use of the following:

@@ -111,13 +111,7 @@ catsApp.service('getAllCats',
                         "animalStatus",
                         "locationName"
                     ],
-                    "filters": [
-                        {
-                            "fieldName": "animalOrgID",
-                            "operation": "equals",
-                            "criteria": "910"
-                        }
-                    ]
+                    filters: []
                 }
             };
             if (catState.isLoggedIn()) {
@@ -130,6 +124,13 @@ catsApp.service('getAllCats',
             } else {
                 postData.apikey = "JrxyBdcw";
                 postData.objectAction = "publicSearch";
+                postData.search.filters.push(
+                    {
+                        "fieldName": "animalOrgID",
+                        "operation": "equals",
+                        "criteria": "910"
+                    }
+                );
             }
             if (catState.isLoggedIn()) {
                 // Loop through all the checkboxes for status (Available, Hold, etc) and add them if checked.
@@ -144,11 +145,11 @@ catsApp.service('getAllCats',
                                 "criteria": value.rgStr
                             }
                         );
-                        // The OR criteria are 1-based. The first one is always animalOrgID=910, so we start with index=2.
-                        orCriteria.push((orCriteria.length + 2).toString());
+                        // The OR criteria are 1-based.
+                        orCriteria.push((orCriteria.length + 1).toString());
                     }
                 });
-                postData.search.filterProcessing = "1 and (" + orCriteria.join(" or ") + ")";
+                postData.search.filterProcessing = orCriteria.join(" or ");
             }
             // See http://odetocode.com/blogs/scott/archive/2014/04/24/canceling-http-requests-in-angularjs.aspx
             var canceller = $q.defer();
@@ -217,11 +218,6 @@ catsApp.service('getOneCat',
                             "fieldName": "animalID",
                             "operation": "equals",
                             "criteria": catId
-                        },
-                        {
-                            "fieldName": "animalOrgID",
-                            "operation": "equals",
-                            "criteria": "910"
                         }
                     ]
                 }
@@ -317,11 +313,6 @@ catsApp.service('findCatByName',
                             "fieldName": "animalName",
                             "operation": "equals",
                             "criteria": catName
-                        },
-                        {
-                            "fieldName": "animalOrgID",
-                            "operation": "equals",
-                            "criteria": "910"
                         }
                     ]
                 }
@@ -352,11 +343,6 @@ catsApp.service('findCatByTypeahead',
                         "animalName"
                     ],
                     "filters": [
-                        {
-                            "fieldName": "animalOrgID",
-                            "operation": "equals",
-                            "criteria": "910"
-                        },
                         {
                             "fieldName": "animalName",
                             "operation": "contains",
@@ -410,13 +396,7 @@ catsApp.service('getCatNamesService',
                             "fieldName": "animalStatus",
                             "operation": "equals",
                             "criteria": "Treatment"
-                        },
-                        {
-                            "fieldName": "animalOrgID",
-                            "operation": "equals",
-                            "criteria": "910"
                         }
-
                     ]
                 }
             };
